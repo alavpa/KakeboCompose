@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">kakebo</string>
+    <string name="concept">Description</string>
+    <string name="income">Income</string>
+    <string name="outcome">Outcome</string>
+    <string name="statistics">Statistics</string>
+    <string name="outcome_success_message">Your outcome was inserted successfully!</string>
+</resources>
