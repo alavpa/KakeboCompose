@@ -4,11 +4,13 @@ import MultiPreview
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
@@ -48,6 +50,14 @@ fun OutcomeScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(KakeboTheme.space.horizontal)
         ) {
+            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                Checkbox(
+                    checked = state.isFixedOutcome,
+                    onCheckedChange = { isFixed -> userInteractions.onIsFixedOutcomeChanged(isFixed) }
+                )
+                Text("Repeat each month.")
+            }
+
             VerticalSpacer(height = KakeboTheme.space.vertical)
             LazyRow(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 items(state.categories) { category ->

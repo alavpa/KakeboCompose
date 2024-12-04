@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import java.text.DecimalFormatSymbols
 import java.text.NumberFormat
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -79,6 +80,12 @@ class OutcomePresenter @Inject constructor() : ViewModel(), OutcomeUserInteracti
             currentState.copy(description = description)
         }
     }
+
+    override fun onIsFixedOutcomeChanged(value: Boolean) {
+        _state.update { currentState ->
+            currentState.copy(isFixedOutcome = value)
+        }
+    }
 }
 
 private fun String.formatText(): String {
@@ -86,11 +93,11 @@ private fun String.formatText(): String {
     while (currentText.length < 4) {
         currentText = "0$currentText"
     }
-    val decimalSeparator = DecimalFormatSymbols.getInstance().decimalSeparator
-    val decimalText = currentText.toMutableList().apply {
-        add(currentText.length - 2, decimalSeparator)
-    }.joinToString(separator = "").toDouble()
-    return NumberFormat.getCurrencyInstance().format(decimalText)
+    val decimalSeparator = DecimalFormatSymbols.getInstance(Locale.ROOT).decimalSeparator
+    val currency = StringBuilder(currentText).apply {
+        insert(currentText.length - 2, decimalSeparator)
+    }.toString().toDouble()
+    return NumberFormat.getCurrencyInstance().format(currency)
 }
 
 data class OutcomeState(
@@ -98,7 +105,8 @@ data class OutcomeState(
     val currentText: String,
     val description: String,
     val categories: List<Pair<String, Boolean>>,
-    val showSuccess: Boolean
+    val showSuccess: Boolean,
+    val isFixedOutcome: Boolean
 ) {
     companion object {
         val INITIAL = OutcomeState(
@@ -111,7 +119,8 @@ data class OutcomeState(
                 Pair("Culture", false),
                 Pair("Extras", false)
             ),
-            showSuccess = false
+            showSuccess = false,
+            isFixedOutcome = false
         )
     }
 }
@@ -120,6 +129,7 @@ interface OutcomeUserInteractions : PadUserInteractions {
     fun onMessageDismissed()
     fun onClickCategory(category: Pair<String, Boolean>)
     fun onDescriptionChanged(description: String)
+    fun onIsFixedOutcomeChanged(value: Boolean)
 
     class Stub : OutcomeUserInteractions {
         override fun onMessageDismissed() = Unit
@@ -128,5 +138,6 @@ interface OutcomeUserInteractions : PadUserInteractions {
         override fun onClickOk() = Unit
         override fun onClickCategory(category: Pair<String, Boolean>) = Unit
         override fun onDescriptionChanged(description: String) = Unit
+        override fun onIsFixedOutcomeChanged(value: Boolean) = Unit
     }
 }
