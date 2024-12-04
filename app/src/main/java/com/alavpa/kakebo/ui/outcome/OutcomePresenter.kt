@@ -1,6 +1,5 @@
 package com.alavpa.kakebo.ui.outcome
 
-import android.util.Log
 import android.util.Pair
 import androidx.lifecycle.ViewModel
 import com.alavpa.kakebo.ui.components.PadUserInteractions
@@ -29,7 +28,6 @@ class OutcomePresenter @Inject constructor() : ViewModel(), OutcomeUserInteracti
     override fun onClickNumber(number: String) {
         _state.update { currentState ->
             val currentText = "${currentState.currentText}$number"
-            Log.d("onClickNumber", currentText)
             if (currentText.length > 9) {
                 currentState
             } else {
