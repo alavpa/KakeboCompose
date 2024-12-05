@@ -1,8 +1,11 @@
 package com.alavpa.kakebo.data.db
 
 import com.alavpa.kakebo.data.mappers.LineDataMapper
+import com.alavpa.kakebo.data.model.TypeData
 import com.alavpa.kakebo.domain.KakeboRepository
 import com.alavpa.kakebo.domain.models.Line
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class KakeboDataRepository @Inject constructor(
@@ -13,7 +16,21 @@ class KakeboDataRepository @Inject constructor(
         return dbDatasource.insert(lineDataMapper.from(line))
     }
 
-    override suspend fun getAllLines(): List<Line> {
-        return dbDatasource.getAll().map { lineDataMapper.to(it) }
+    override fun getAllLines(): Flow<List<Line>> {
+        return dbDatasource.getAll().map { linesData ->
+            linesData.map { lineDataMapper.to(it) }
+        }
+    }
+
+    override fun getOutcomeLines(): Flow<List<Line>> {
+        return dbDatasource.getByType(TypeData.Outcome).map { linesData ->
+            linesData.map { lineDataMapper.to(it) }
+        }
+    }
+
+    override fun getIncomeLines(): Flow<List<Line>> {
+        return dbDatasource.getByType(TypeData.Income).map { linesData ->
+            linesData.map { lineDataMapper.to(it) }
+        }
     }
 }

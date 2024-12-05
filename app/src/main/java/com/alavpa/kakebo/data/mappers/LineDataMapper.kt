@@ -11,6 +11,7 @@ class LineDataMapper @Inject constructor(
     fun from(line: Line): LineData = LineData(
         line.id,
         line.amount,
+        line.description,
         line.timestamp,
         typeDataMapper.from(line.type),
         categoryDataMapper.from(line.category),
@@ -20,6 +21,7 @@ class LineDataMapper @Inject constructor(
     fun to(lineData: LineData): Line = Line(
         lineData.id,
         lineData.amount,
+        lineData.description,
         lineData.timestamp,
         typeDataMapper.to(lineData.type),
         categoryDataMapper.to(lineData.category),

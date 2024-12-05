@@ -9,6 +9,7 @@ import com.alavpa.kakebo.data.model.TypeData
 data class LineData(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val amount: Long,
+    val description: String,
     val timestamp: Long,
     val type: TypeData,
     val category: CategoryData,

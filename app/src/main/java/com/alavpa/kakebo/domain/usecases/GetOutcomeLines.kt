@@ -5,7 +5,7 @@ import com.alavpa.kakebo.domain.models.Line
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class GetAllLines @Inject constructor(private val repository: KakeboRepository) {
+class GetOutcomeLines @Inject constructor(private val repository: KakeboRepository) {
 
-    operator fun invoke(): Flow<List<Line>> = repository.getAllLines()
+    operator fun invoke(): Flow<List<Line>> = repository.getOutcomeLines()
 }

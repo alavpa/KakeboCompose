@@ -2,28 +2,51 @@ package com.alavpa.kakebo.ui.outcome
 
 import android.util.Pair
 import androidx.lifecycle.ViewModel
-import com.alavpa.kakebo.domain.usecases.GetAllLines
+import androidx.lifecycle.viewModelScope
+import com.alavpa.kakebo.domain.models.Line
+import com.alavpa.kakebo.domain.models.Type
+import com.alavpa.kakebo.domain.usecases.GetOutcomeLines
 import com.alavpa.kakebo.domain.usecases.InsertNewLine
 import com.alavpa.kakebo.ui.components.PadUserInteractions
+import com.alavpa.kakebo.ui.mappers.CategoryUIMapper
+import com.alavpa.kakebo.ui.mappers.LineUIMapper
 import com.alavpa.kakebo.ui.models.CategoryUI
+import com.alavpa.kakebo.ui.models.LineUI
+import com.alavpa.kakebo.ui.utils.AmountUtils
+import com.alavpa.kakebo.ui.utils.CalendarUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
-import java.text.DecimalFormatSymbols
-import java.text.NumberFormat
-import java.util.Locale
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class OutcomePresenter @Inject constructor(
     private val insertNewLine: InsertNewLine,
-    private val getAllLines: GetAllLines
+    private val getLines: GetOutcomeLines,
+    private val calendarUtils: CalendarUtils,
+    private val categoryUIMapper: CategoryUIMapper,
+    private val lineUIMapper: LineUIMapper,
+    private val amountUtils: AmountUtils
 ) : ViewModel(), OutcomeUserInteractions {
 
     private val _state = MutableStateFlow(OutcomeState.INITIAL)
     val state: StateFlow<OutcomeState>
         get() = _state
+
+    init {
+        viewModelScope.launch {
+            getLines().collect { lines ->
+                _state.update { currentState ->
+                    currentState.copy(
+                        lines = lines.map { lineUIMapper.from(it) },
+                        formattedText = amountUtils.fromLongToCurrency(0)
+                    )
+                }
+            }
+        }
+    }
 
     override fun onMessageDismissed() {
         _state.update { currentState ->
@@ -39,7 +62,7 @@ class OutcomePresenter @Inject constructor(
             } else {
                 currentState.copy(
                     currentText = currentText,
-                    formattedText = currentText.formatText()
+                    formattedText = amountUtils.fromTextToCurrency(currentText)
                 )
             }
         }
@@ -54,7 +77,7 @@ class OutcomePresenter @Inject constructor(
                 )
                 currentState.copy(
                     currentText = currentText,
-                    formattedText = currentText.formatText()
+                    formattedText = amountUtils.fromTextToCurrency(currentText)
                 )
             } else {
                 currentState
@@ -63,7 +86,28 @@ class OutcomePresenter @Inject constructor(
     }
 
     override fun onClickOk() {
-        _state.update { OutcomeState.INITIAL.copy(showSuccess = true) }
+        viewModelScope.launch {
+            with(_state.value) {
+                val line = Line(
+                    amount = currentText.toLongOrNull() ?: 0,
+                    description = description,
+                    timestamp = calendarUtils.getCurrentTimestamp(),
+                    type = Type.Outcome,
+                    category = categoryUIMapper.to(
+                        categories.find { it.second }?.first ?: CategoryUI.Extras
+                    ),
+                    isFixed = isFixedOutcome
+                )
+                insertNewLine(line)
+                _state.update { currentState ->
+                    OutcomeState.INITIAL.copy(
+                        showSuccess = true,
+                        lines = currentState.lines,
+                        formattedText = amountUtils.fromLongToCurrency(0)
+                    )
+                }
+            }
+        }
     }
 
     override fun onClickCategory(category: Pair<CategoryUI, Boolean>) {
@@ -92,19 +136,8 @@ class OutcomePresenter @Inject constructor(
     }
 }
 
-private fun String.formatText(): String {
-    var currentText = this
-    while (currentText.length < 4) {
-        currentText = "0$currentText"
-    }
-    val decimalSeparator = DecimalFormatSymbols.getInstance(Locale.ROOT).decimalSeparator
-    val currency = StringBuilder(currentText).apply {
-        insert(currentText.length - 2, decimalSeparator)
-    }.toString().toDouble()
-    return NumberFormat.getCurrencyInstance().format(currency)
-}
-
 data class OutcomeState(
+    val lines: List<LineUI>,
     val formattedText: String,
     val currentText: String,
     val description: String,
@@ -114,7 +147,8 @@ data class OutcomeState(
 ) {
     companion object {
         val INITIAL = OutcomeState(
-            formattedText = "000".formatText(),
+            lines = emptyList(),
+            formattedText = "",
             currentText = "",
             description = "",
             categories = listOf(
