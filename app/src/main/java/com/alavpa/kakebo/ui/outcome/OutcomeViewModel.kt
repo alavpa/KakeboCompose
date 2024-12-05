@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class OutcomePresenter @Inject constructor(
+class OutcomeViewModel @Inject constructor(
     private val insertNewLine: InsertNewLine,
     private val getLines: GetOutcomeLines,
     private val calendarUtils: CalendarUtils,

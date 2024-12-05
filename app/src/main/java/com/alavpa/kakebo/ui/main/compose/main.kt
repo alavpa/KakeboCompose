@@ -25,7 +25,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.alavpa.kakebo.ui.components.BottomNavItem
-import com.alavpa.kakebo.ui.outcome.OutcomePresenter
+import com.alavpa.kakebo.ui.outcome.OutcomeViewModel
 import com.alavpa.kakebo.ui.outcome.compose.OutcomeScreen
 import com.alavpa.kakebo.ui.theme.KakeboTheme
 
@@ -87,7 +87,7 @@ fun MainScreen() {
 
 @Composable
 fun OutcomeScreenContainer(
-    viewModel: OutcomePresenter = hiltViewModel(),
+    viewModel: OutcomeViewModel = hiltViewModel(),
     snackbarHostState: SnackbarHostState
 ) {
     OutcomeScreen(viewModel.state.collectAsState().value, viewModel, snackbarHostState)
