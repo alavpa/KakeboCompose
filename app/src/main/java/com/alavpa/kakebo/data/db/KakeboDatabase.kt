@@ -5,7 +5,7 @@ import androidx.room.RoomDatabase
 import com.alavpa.kakebo.data.db.dao.LineDao
 import com.alavpa.kakebo.data.db.entities.LineData
 
-@Database(entities = [LineData::class], version = 1)
+@Database(entities = [LineData::class], version = 1, exportSchema = false)
 abstract class KakeboDatabase : RoomDatabase() {
     abstract fun lineDao(): LineDao
 }
