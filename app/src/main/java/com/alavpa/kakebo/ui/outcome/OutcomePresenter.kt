@@ -2,7 +2,10 @@ package com.alavpa.kakebo.ui.outcome
 
 import android.util.Pair
 import androidx.lifecycle.ViewModel
+import com.alavpa.kakebo.domain.usecases.GetAllLines
+import com.alavpa.kakebo.domain.usecases.InsertNewLine
 import com.alavpa.kakebo.ui.components.PadUserInteractions
+import com.alavpa.kakebo.ui.models.CategoryUI
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,7 +16,10 @@ import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
-class OutcomePresenter @Inject constructor() : ViewModel(), OutcomeUserInteractions {
+class OutcomePresenter @Inject constructor(
+    private val insertNewLine: InsertNewLine,
+    private val getAllLines: GetAllLines
+) : ViewModel(), OutcomeUserInteractions {
 
     private val _state = MutableStateFlow(OutcomeState.INITIAL)
     val state: StateFlow<OutcomeState>
@@ -60,7 +66,7 @@ class OutcomePresenter @Inject constructor() : ViewModel(), OutcomeUserInteracti
         _state.update { OutcomeState.INITIAL.copy(showSuccess = true) }
     }
 
-    override fun onClickCategory(category: Pair<String, Boolean>) {
+    override fun onClickCategory(category: Pair<CategoryUI, Boolean>) {
         _state.update { currentState ->
             currentState.copy(
                 categories = currentState.categories.map { currentCategory ->
@@ -102,7 +108,7 @@ data class OutcomeState(
     val formattedText: String,
     val currentText: String,
     val description: String,
-    val categories: List<Pair<String, Boolean>>,
+    val categories: List<Pair<CategoryUI, Boolean>>,
     val showSuccess: Boolean,
     val isFixedOutcome: Boolean
 ) {
@@ -112,10 +118,10 @@ data class OutcomeState(
             currentText = "",
             description = "",
             categories = listOf(
-                Pair("Survival", false),
-                Pair("Leisure", false),
-                Pair("Culture", false),
-                Pair("Extras", false)
+                Pair(CategoryUI.Survival, false),
+                Pair(CategoryUI.Leisure, false),
+                Pair(CategoryUI.Culture, false),
+                Pair(CategoryUI.Extras, false)
             ),
             showSuccess = false,
             isFixedOutcome = false
@@ -125,7 +131,7 @@ data class OutcomeState(
 
 interface OutcomeUserInteractions : PadUserInteractions {
     fun onMessageDismissed()
-    fun onClickCategory(category: Pair<String, Boolean>)
+    fun onClickCategory(category: Pair<CategoryUI, Boolean>)
     fun onDescriptionChanged(description: String)
     fun onIsFixedOutcomeChanged(value: Boolean)
 
@@ -134,7 +140,7 @@ interface OutcomeUserInteractions : PadUserInteractions {
         override fun onClickNumber(number: String) = Unit
         override fun onClickDelete() = Unit
         override fun onClickOk() = Unit
-        override fun onClickCategory(category: Pair<String, Boolean>) = Unit
+        override fun onClickCategory(category: Pair<CategoryUI, Boolean>) = Unit
         override fun onDescriptionChanged(description: String) = Unit
         override fun onIsFixedOutcomeChanged(value: Boolean) = Unit
     }

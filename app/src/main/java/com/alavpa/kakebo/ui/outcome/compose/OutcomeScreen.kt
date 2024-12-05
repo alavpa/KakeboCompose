@@ -61,7 +61,7 @@ fun OutcomeScreen(
             VerticalSpacer(height = KakeboTheme.space.vertical)
             LazyRow(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 items(state.categories) { category ->
-                    CategoryPill(category.first, category.second) {
+                    CategoryPill(stringResource(category.first.resId), category.second) {
                         userInteractions.onClickCategory(category)
                     }
                 }
