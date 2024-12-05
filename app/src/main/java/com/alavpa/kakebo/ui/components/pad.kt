@@ -13,11 +13,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import com.alavpa.kakebo.ui.theme.KakeboTheme
 
 @Composable
 fun Pad(userInteractions: PadUserInteractions, modifier: Modifier = Modifier) {
+    val focusManager = LocalFocusManager.current
     Row(modifier) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Button(onClick = { userInteractions.onClickNumber("1") }) {
@@ -62,7 +64,12 @@ fun Pad(userInteractions: PadUserInteractions, modifier: Modifier = Modifier) {
             Button(onClick = { userInteractions.onClickNumber("9") }) {
                 Text("9")
             }
-            Button(onClick = { userInteractions.onClickOk() }) {
+            Button(
+                onClick = {
+                    focusManager.clearFocus()
+                    userInteractions.onClickOk()
+                }
+            ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.Send,
                     contentDescription = "send"

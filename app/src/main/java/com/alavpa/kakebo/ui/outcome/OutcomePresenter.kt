@@ -43,8 +43,8 @@ class OutcomePresenter @Inject constructor() : ViewModel(), OutcomeUserInteracti
         _state.update { currentState ->
             if (currentState.currentText.isNotEmpty()) {
                 val currentText = currentState.currentText.substring(
-                    0,
-                    currentState.currentText.lastIndex
+                    startIndex = 0,
+                    endIndex = currentState.currentText.lastIndex
                 )
                 currentState.copy(
                     currentText = currentText,
