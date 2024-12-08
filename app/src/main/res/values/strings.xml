@@ -5,8 +5,11 @@
     <string name="outcome">Outcome</string>
     <string name="statistics">Statistics</string>
     <string name="outcome_success_message">Your outcome was inserted successfully!</string>
+    <string name="income_success_message">Your income was inserted successfully!</string>
     <string name="survival">Survival</string>
     <string name="leisure">Leisure</string>
     <string name="culture">Culture</string>
     <string name="extras">Extras</string>
+    <string name="salary">Salary</string>
+    <string name="Gifts">Gifts</string>
 </resources>

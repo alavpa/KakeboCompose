@@ -15,6 +15,10 @@ class AmountUtils @Inject constructor() {
         return amount.toString().formatText()
     }
 
+    fun reset(): String {
+        return fromLongToCurrency(amount = 0)
+    }
+
     private fun String.formatText(): String {
         var currentText = this
         while (currentText.length < 4) {

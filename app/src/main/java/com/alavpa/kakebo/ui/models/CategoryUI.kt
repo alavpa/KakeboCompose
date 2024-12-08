@@ -7,5 +7,7 @@ enum class CategoryUI(@StringRes val resId: Int) {
     Survival(R.string.survival),
     Leisure(R.string.leisure),
     Culture(R.string.culture),
-    Extras(R.string.extras)
+    Extras(R.string.extras),
+    Salary(R.string.salary),
+    Gifts(R.string.Gifts)
 }

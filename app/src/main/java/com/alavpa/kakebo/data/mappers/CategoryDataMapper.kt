@@ -10,6 +10,8 @@ class CategoryDataMapper @Inject constructor() {
         Category.Leisure -> CategoryData.Leisure
         Category.Culture -> CategoryData.Culture
         Category.Extras -> CategoryData.Extras
+        Category.Salary -> CategoryData.Salary
+        Category.Gifts -> CategoryData.Gifts
     }
 
     fun to(categoryData: CategoryData): Category = when (categoryData) {
@@ -17,5 +19,7 @@ class CategoryDataMapper @Inject constructor() {
         CategoryData.Leisure -> Category.Leisure
         CategoryData.Culture -> Category.Culture
         CategoryData.Extras -> Category.Extras
+        CategoryData.Salary -> Category.Salary
+        CategoryData.Gifts -> Category.Gifts
     }
 }

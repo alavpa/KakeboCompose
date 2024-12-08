@@ -27,8 +27,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.alavpa.kakebo.ui.components.BottomNavItem
 import com.alavpa.kakebo.ui.components.SnackbarInteractions
-import com.alavpa.kakebo.ui.outcome.OutcomeViewModel
-import com.alavpa.kakebo.ui.outcome.compose.OutcomeScreen
+import com.alavpa.kakebo.ui.lines.AddLinesViewModel
+import com.alavpa.kakebo.ui.lines.compose.AddLinesScreen
 import com.alavpa.kakebo.ui.theme.KakeboTheme
 
 @Composable
@@ -75,7 +75,7 @@ fun MainScreen() {
             modifier = Modifier.padding(paddingValues = paddingValues)
         ) {
             composable(BottomNavItem.Income.route) {
-                IncomeScreenContainer()
+                IncomeScreenContainer(snackbarHostState = snackbarHostState)
             }
             composable(BottomNavItem.Outcome.route) {
                 OutcomeScreenContainer(snackbarHostState = snackbarHostState)
@@ -89,19 +89,31 @@ fun MainScreen() {
 
 @Composable
 fun OutcomeScreenContainer(
-    viewModel: OutcomeViewModel = hiltViewModel(),
+    viewModel: AddLinesViewModel = hiltViewModel(),
     snackbarHostState: SnackbarHostState
 ) {
     val state by viewModel.state.collectAsState()
-    OutcomeScreen(state, viewModel) { successMessage ->
+    AddLinesScreen(
+        state = state,
+        isIncome = false,
+        userInteractions = viewModel
+    ) { successMessage ->
         showSnackbarMessage(snackbarHostState, successMessage, viewModel)
     }
 }
 
 @Composable
-fun IncomeScreenContainer() {
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("INCOME", style = KakeboTheme.typography.titleLarge)
+fun IncomeScreenContainer(
+    viewModel: AddLinesViewModel = hiltViewModel(),
+    snackbarHostState: SnackbarHostState
+) {
+    val state by viewModel.state.collectAsState()
+    AddLinesScreen(
+        state = state,
+        isIncome = true,
+        userInteractions = viewModel
+    ) { successMessage ->
+        showSnackbarMessage(snackbarHostState, successMessage, viewModel)
     }
 }
 

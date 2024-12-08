@@ -1,4 +1,4 @@
-package com.alavpa.kakebo.ui.outcome.compose
+package com.alavpa.kakebo.ui.lines.compose
 
 import MultiPreview
 import androidx.compose.foundation.layout.Arrangement
@@ -22,19 +22,26 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import com.alavpa.kakebo.R
 import com.alavpa.kakebo.ui.components.CategoryPill
+import com.alavpa.kakebo.ui.components.InitializeOnce
 import com.alavpa.kakebo.ui.components.Pad
 import com.alavpa.kakebo.ui.components.VerticalSpacer
-import com.alavpa.kakebo.ui.outcome.OutcomeState
-import com.alavpa.kakebo.ui.outcome.OutcomeUserInteractions
+import com.alavpa.kakebo.ui.lines.AddLinesState
+import com.alavpa.kakebo.ui.lines.AddLinesUserInteractions
 import com.alavpa.kakebo.ui.theme.KakeboTheme
 
 @Composable
-fun OutcomeScreen(
-    state: OutcomeState,
-    userInteractions: OutcomeUserInteractions,
+fun AddLinesScreen(
+    state: AddLinesState,
+    isIncome: Boolean,
+    userInteractions: AddLinesUserInteractions,
     showSnackbarMessage: suspend (String) -> Unit
 ) {
-    val successMessage = stringResource(R.string.outcome_success_message)
+    InitializeOnce { userInteractions.onInitializeOnce(isIncome) }
+    val successMessage = if (isIncome) {
+        stringResource(R.string.income_success_message)
+    } else {
+        stringResource(R.string.outcome_success_message)
+    }
     LaunchedEffect(state.showSuccess) {
         if (state.showSuccess) {
             showSnackbarMessage(successMessage)
@@ -63,7 +70,7 @@ fun OutcomeScreen(
             }
             VerticalSpacer(height = KakeboTheme.space.vertical)
             Text(text = state.formattedText, fontSize = 56.sp)
-            Pad(userInteractions)
+            Pad(userInteractions, isIncome)
             VerticalSpacer(height = KakeboTheme.space.vertical)
             TextField(
                 value = state.description,
@@ -89,9 +96,10 @@ fun OutcomeScreen(
 @Composable
 fun OutcomeScreenPreview() {
     KakeboTheme {
-        OutcomeScreen(
-            OutcomeState.INITIAL,
-            OutcomeUserInteractions.Stub(),
+        AddLinesScreen(
+            AddLinesState.INITIAL,
+            isIncome = false,
+            AddLinesUserInteractions.Stub(),
             {}
         )
     }

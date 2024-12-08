@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import com.alavpa.kakebo.ui.theme.KakeboTheme
 
 @Composable
-fun Pad(userInteractions: PadUserInteractions, modifier: Modifier = Modifier) {
+fun Pad(userInteractions: PadUserInteractions, isIncome: Boolean, modifier: Modifier = Modifier) {
     val focusManager = LocalFocusManager.current
     Row(modifier) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -67,7 +67,7 @@ fun Pad(userInteractions: PadUserInteractions, modifier: Modifier = Modifier) {
             Button(
                 onClick = {
                     focusManager.clearFocus()
-                    userInteractions.onClickOk()
+                    userInteractions.onClickOk(isIncome)
                 }
             ) {
                 Icon(
@@ -82,5 +82,5 @@ fun Pad(userInteractions: PadUserInteractions, modifier: Modifier = Modifier) {
 interface PadUserInteractions {
     fun onClickNumber(number: String)
     fun onClickDelete()
-    fun onClickOk()
+    fun onClickOk(isIncome: Boolean)
 }

@@ -1,4 +1,4 @@
-package com.alavpa.kakebo.ui.outcome
+package com.alavpa.kakebo.ui.lines
 
 import android.util.Pair
 import androidx.lifecycle.ViewModel
@@ -23,26 +23,38 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class OutcomeViewModel @Inject constructor(
+class AddLinesViewModel @Inject constructor(
     private val insertNewLine: InsertNewLine,
     private val getLines: GetOutcomeLines,
     private val calendarUtils: CalendarUtils,
     private val categoryUIMapper: CategoryUIMapper,
     private val lineUIMapper: LineUIMapper,
     private val amountUtils: AmountUtils
-) : ViewModel(), OutcomeUserInteractions {
+) : ViewModel(), AddLinesUserInteractions {
 
-    private val _state = MutableStateFlow(OutcomeState.INITIAL)
-    val state: StateFlow<OutcomeState>
+    private val _state = MutableStateFlow(AddLinesState.INITIAL)
+    val state: StateFlow<AddLinesState>
         get() = _state
 
-    init {
+    override fun onInitializeOnce(isIncome: Boolean) {
         viewModelScope.launch {
+            val outcomeCategories = listOf(
+                Pair(CategoryUI.Survival, false),
+                Pair(CategoryUI.Leisure, false),
+                Pair(CategoryUI.Culture, false),
+                Pair(CategoryUI.Extras, false)
+            )
+            val incomeCategories = listOf(
+                Pair(CategoryUI.Salary, false),
+                Pair(CategoryUI.Gifts, false),
+                Pair(CategoryUI.Extras, false)
+            )
             getLines().collect { lines ->
                 _state.update { currentState ->
                     currentState.copy(
                         lines = lines.map { lineUIMapper.from(it) },
-                        formattedText = amountUtils.fromLongToCurrency(0)
+                        formattedText = amountUtils.reset(),
+                        categories = if (isIncome) incomeCategories else outcomeCategories
                     )
                 }
             }
@@ -86,14 +98,14 @@ class OutcomeViewModel @Inject constructor(
         }
     }
 
-    override fun onClickOk() {
+    override fun onClickOk(isIncome: Boolean) {
         viewModelScope.launch {
             with(_state.value) {
                 val line = Line(
                     amount = currentText.toLongOrNull() ?: 0,
                     description = description,
                     timestamp = calendarUtils.getCurrentTimestamp(),
-                    type = Type.Outcome,
+                    type = if (isIncome) Type.Income else Type.Outcome,
                     category = categoryUIMapper.to(
                         categories.find { it.second }?.first ?: CategoryUI.Extras
                     ),
@@ -101,10 +113,10 @@ class OutcomeViewModel @Inject constructor(
                 )
                 insertNewLine(line)
                 _state.update { currentState ->
-                    OutcomeState.INITIAL.copy(
+                    AddLinesState.INITIAL.copy(
                         showSuccess = true,
                         lines = currentState.lines,
-                        formattedText = amountUtils.fromLongToCurrency(0)
+                        formattedText = amountUtils.reset()
                     )
                 }
             }
@@ -137,7 +149,7 @@ class OutcomeViewModel @Inject constructor(
     }
 }
 
-data class OutcomeState(
+data class AddLinesState(
     val lines: List<LineUI>,
     val formattedText: String,
     val currentText: String,
@@ -147,7 +159,7 @@ data class OutcomeState(
     val isFixedOutcome: Boolean
 ) {
     companion object {
-        val INITIAL = OutcomeState(
+        val INITIAL = AddLinesState(
             lines = emptyList(),
             formattedText = "",
             currentText = "",
@@ -164,18 +176,20 @@ data class OutcomeState(
     }
 }
 
-interface OutcomeUserInteractions : PadUserInteractions, SnackbarInteractions {
+interface AddLinesUserInteractions : PadUserInteractions, SnackbarInteractions {
     fun onClickCategory(category: Pair<CategoryUI, Boolean>)
     fun onDescriptionChanged(description: String)
     fun onIsFixedOutcomeChanged(value: Boolean)
+    fun onInitializeOnce(isIncome: Boolean)
 
-    class Stub : OutcomeUserInteractions {
+    class Stub : AddLinesUserInteractions {
         override fun onMessageDismissed() = Unit
         override fun onClickNumber(number: String) = Unit
         override fun onClickDelete() = Unit
-        override fun onClickOk() = Unit
+        override fun onClickOk(isIncome: Boolean) = Unit
         override fun onClickCategory(category: Pair<CategoryUI, Boolean>) = Unit
         override fun onDescriptionChanged(description: String) = Unit
         override fun onIsFixedOutcomeChanged(value: Boolean) = Unit
+        override fun onInitializeOnce(isIncome: Boolean) = Unit
     }
 }
