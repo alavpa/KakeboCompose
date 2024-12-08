@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alavpa.kakebo.domain.models.Line
 import com.alavpa.kakebo.domain.models.Type
-import com.alavpa.kakebo.domain.usecases.GetOutcomeLines
+import com.alavpa.kakebo.domain.usecases.GetAllLines
 import com.alavpa.kakebo.domain.usecases.InsertNewLine
 import com.alavpa.kakebo.ui.components.PadUserInteractions
 import com.alavpa.kakebo.ui.components.SnackbarInteractions
@@ -25,7 +25,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AddLinesViewModel @Inject constructor(
     private val insertNewLine: InsertNewLine,
-    private val getLines: GetOutcomeLines,
+    private val getLines: GetAllLines,
     private val calendarUtils: CalendarUtils,
     private val categoryUIMapper: CategoryUIMapper,
     private val lineUIMapper: LineUIMapper,

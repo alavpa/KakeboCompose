@@ -1,6 +1,7 @@
 package com.alavpa.kakebo.ui.mappers
 
 import com.alavpa.kakebo.domain.models.Line
+import com.alavpa.kakebo.domain.models.Type
 import com.alavpa.kakebo.ui.models.LineUI
 import com.alavpa.kakebo.ui.utils.AmountUtils
 import com.alavpa.kakebo.ui.utils.CalendarUtils
@@ -13,7 +14,8 @@ class LineUIMapper @Inject constructor(
     fun from(line: Line): LineUI {
         return LineUI(
             amountUtils.fromLongToCurrency(line.amount),
-            calendarUtils.getDateFormat(line.timestamp)
+            calendarUtils.getDateFormat(line.timestamp),
+            isIncome = line.type == Type.Income
         )
     }
 }

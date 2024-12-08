@@ -82,9 +82,28 @@ fun AddLinesScreen(
             )
             LazyColumn {
                 items(state.lines) { line ->
-                    Row(Modifier.fillMaxWidth()) {
-                        Text(line.amount)
-                        Text(line.date)
+                    val colorText = if (line.isIncome) {
+                        KakeboTheme.colorSchema.color8
+                    } else {
+                        KakeboTheme.colorSchema.color1
+                    }
+                    Row(
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(top = KakeboTheme.space.vertical)) {
+                        Text(
+                            line.amount,
+                            Modifier
+                                .fillMaxWidth()
+                                .weight(1f),
+                            style = KakeboTheme.typography.titleLarge,
+                            color = colorText
+                        )
+                        Text(
+                            line.date,
+                            style = KakeboTheme.typography.titleLarge,
+                            color = colorText
+                        )
                     }
                 }
             }
