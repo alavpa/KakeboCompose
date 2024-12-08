@@ -3,8 +3,8 @@ package com.alavpa.kakebo.ui.mappers
 import com.alavpa.kakebo.domain.models.Line
 import com.alavpa.kakebo.domain.models.Type
 import com.alavpa.kakebo.ui.models.LineUI
-import com.alavpa.kakebo.ui.utils.AmountUtils
-import com.alavpa.kakebo.ui.utils.CalendarUtils
+import com.alavpa.kakebo.utils.AmountUtils
+import com.alavpa.kakebo.utils.CalendarUtils
 import javax.inject.Inject
 
 class LineUIMapper @Inject constructor(

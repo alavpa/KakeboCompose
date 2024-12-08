@@ -120,7 +120,7 @@ fun IncomeScreenContainer(
 @Composable
 fun StatisticsScreenContainer() {
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("STATISTICS", style = KakeboTheme.typography.titleLarge)
+        Text("STATISTICS", style = KakeboTheme.typography.regularText)
     }
 }
 

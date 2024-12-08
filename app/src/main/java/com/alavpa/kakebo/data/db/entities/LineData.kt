@@ -11,6 +11,8 @@ data class LineData(
     val amount: Long,
     val description: String,
     val timestamp: Long,
+    val month: Int,
+    val year: Int,
     val type: TypeData,
     val category: CategoryData,
     val isFixed: Boolean

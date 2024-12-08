@@ -2,9 +2,11 @@ package com.alavpa.kakebo.data.mappers
 
 import com.alavpa.kakebo.data.db.entities.LineData
 import com.alavpa.kakebo.domain.models.Line
+import com.alavpa.kakebo.utils.CalendarUtils
 import javax.inject.Inject
 
 class LineDataMapper @Inject constructor(
+    private val calendarUtils: CalendarUtils,
     private val categoryDataMapper: CategoryDataMapper,
     private val typeDataMapper: TypeDataMapper
 ) {
@@ -13,6 +15,8 @@ class LineDataMapper @Inject constructor(
         line.amount,
         line.description,
         line.timestamp,
+        calendarUtils.getMonth(line.timestamp),
+        calendarUtils.getYear(line.timestamp),
         typeDataMapper.from(line.type),
         categoryDataMapper.from(line.category),
         line.isFixed

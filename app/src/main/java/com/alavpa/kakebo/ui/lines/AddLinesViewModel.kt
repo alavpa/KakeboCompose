@@ -13,8 +13,8 @@ import com.alavpa.kakebo.ui.mappers.CategoryUIMapper
 import com.alavpa.kakebo.ui.mappers.LineUIMapper
 import com.alavpa.kakebo.ui.models.CategoryUI
 import com.alavpa.kakebo.ui.models.LineUI
-import com.alavpa.kakebo.ui.utils.AmountUtils
-import com.alavpa.kakebo.ui.utils.CalendarUtils
+import com.alavpa.kakebo.utils.AmountUtils
+import com.alavpa.kakebo.utils.CalendarUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

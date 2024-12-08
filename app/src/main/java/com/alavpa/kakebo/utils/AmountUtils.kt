@@ -1,4 +1,4 @@
-package com.alavpa.kakebo.ui.utils
+package com.alavpa.kakebo.utils
 
 import java.text.DecimalFormatSymbols
 import java.text.NumberFormat

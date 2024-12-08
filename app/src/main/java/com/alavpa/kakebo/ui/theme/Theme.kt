@@ -55,7 +55,7 @@ fun KakeboTheme(
     }
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = KakeboTheme.typography,
+        typography = Typography,
         content = content
     )
 }
@@ -70,5 +70,5 @@ object KakeboTheme {
 
     val cornerRadius = CornerRadius
 
-    val typography = Typography
+    val typography = kakeboTypography
 }

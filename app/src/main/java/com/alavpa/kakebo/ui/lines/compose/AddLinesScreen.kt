@@ -19,7 +19,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.sp
 import com.alavpa.kakebo.R
 import com.alavpa.kakebo.ui.components.CategoryPill
 import com.alavpa.kakebo.ui.components.InitializeOnce
@@ -86,7 +85,7 @@ fun AddLinesScreen(
                         }
                     }
                     VerticalSpacer(height = KakeboTheme.space.vertical)
-                    Text(text = state.formattedText, fontSize = 56.sp)
+                    Text(text = state.formattedText, style = KakeboTheme.typography.padText)
                     Pad(userInteractions, isIncome)
                     VerticalSpacer(height = KakeboTheme.space.vertical)
                     TextField(
@@ -116,12 +115,12 @@ fun AddLinesScreen(
                         Modifier
                             .fillMaxWidth()
                             .weight(1f),
-                        style = KakeboTheme.typography.titleLarge,
+                        style = KakeboTheme.typography.regularText,
                         color = colorText
                     )
                     Text(
                         line.date,
-                        style = KakeboTheme.typography.titleLarge,
+                        style = KakeboTheme.typography.regularText,
                         color = colorText
                     )
                 }
