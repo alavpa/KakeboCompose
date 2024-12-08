@@ -47,64 +47,83 @@ fun AddLinesScreen(
             showSnackbarMessage(successMessage)
         }
     }
-    Box(Modifier.fillMaxSize()) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.padding(KakeboTheme.space.horizontal)
-        ) {
-            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                Checkbox(
-                    checked = state.isFixedOutcome,
-                    onCheckedChange = { isFixed -> userInteractions.onIsFixedOutcomeChanged(isFixed) }
-                )
-                Text("Repeat each month.")
-            }
+    Box(
+        Modifier
+            .fillMaxSize()
+            .padding(KakeboTheme.space.horizontal)
+    ) {
 
-            VerticalSpacer(height = KakeboTheme.space.vertical)
-            LazyRow(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                items(state.categories) { category ->
-                    CategoryPill(stringResource(category.first.resId), category.second) {
-                        userInteractions.onClickCategory(category)
+        LazyColumn {
+            item {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Row(
+                        Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Checkbox(
+                            checked = state.isFixedOutcome,
+                            onCheckedChange = { isFixed ->
+                                userInteractions.onIsFixedOutcomeChanged(
+                                    isFixed
+                                )
+                            }
+                        )
+                        Text("Repeat each month.")
                     }
+
+                    VerticalSpacer(height = KakeboTheme.space.vertical)
+                    LazyRow(
+                        Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        items(state.categories) { category ->
+                            CategoryPill(
+                                stringResource(category.first.resId),
+                                category.second
+                            ) {
+                                userInteractions.onClickCategory(category)
+                            }
+                        }
+                    }
+                    VerticalSpacer(height = KakeboTheme.space.vertical)
+                    Text(text = state.formattedText, fontSize = 56.sp)
+                    Pad(userInteractions, isIncome)
+                    VerticalSpacer(height = KakeboTheme.space.vertical)
+                    TextField(
+                        value = state.description,
+                        onValueChange = { userInteractions.onDescriptionChanged(it) },
+                        label = { Text(stringResource(R.string.concept)) },
+                        modifier = Modifier.fillMaxWidth(),
+                        minLines = 3,
+                        maxLines = 5
+                    )
+
                 }
             }
-            VerticalSpacer(height = KakeboTheme.space.vertical)
-            Text(text = state.formattedText, fontSize = 56.sp)
-            Pad(userInteractions, isIncome)
-            VerticalSpacer(height = KakeboTheme.space.vertical)
-            TextField(
-                value = state.description,
-                onValueChange = { userInteractions.onDescriptionChanged(it) },
-                label = { Text(stringResource(R.string.concept)) },
-                modifier = Modifier.fillMaxWidth(),
-                minLines = 3,
-                maxLines = 5
-            )
-            LazyColumn {
-                items(state.lines) { line ->
-                    val colorText = if (line.isIncome) {
-                        KakeboTheme.colorSchema.color8
-                    } else {
-                        KakeboTheme.colorSchema.color1
-                    }
-                    Row(
+            items(state.lines) { line ->
+                val colorText = if (line.isIncome) {
+                    KakeboTheme.colorSchema.color8
+                } else {
+                    KakeboTheme.colorSchema.color1
+                }
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(top = KakeboTheme.space.vertical)
+                ) {
+                    Text(
+                        line.amount,
                         Modifier
                             .fillMaxWidth()
-                            .padding(top = KakeboTheme.space.vertical)) {
-                        Text(
-                            line.amount,
-                            Modifier
-                                .fillMaxWidth()
-                                .weight(1f),
-                            style = KakeboTheme.typography.titleLarge,
-                            color = colorText
-                        )
-                        Text(
-                            line.date,
-                            style = KakeboTheme.typography.titleLarge,
-                            color = colorText
-                        )
-                    }
+                            .weight(1f),
+                        style = KakeboTheme.typography.titleLarge,
+                        color = colorText
+                    )
+                    Text(
+                        line.date,
+                        style = KakeboTheme.typography.titleLarge,
+                        color = colorText
+                    )
                 }
             }
         }
