@@ -8,6 +8,7 @@ import com.alavpa.kakebo.domain.models.Type
 import com.alavpa.kakebo.domain.usecases.GetOutcomeLines
 import com.alavpa.kakebo.domain.usecases.InsertNewLine
 import com.alavpa.kakebo.ui.components.PadUserInteractions
+import com.alavpa.kakebo.ui.components.SnackbarInteractions
 import com.alavpa.kakebo.ui.mappers.CategoryUIMapper
 import com.alavpa.kakebo.ui.mappers.LineUIMapper
 import com.alavpa.kakebo.ui.models.CategoryUI
@@ -163,8 +164,7 @@ data class OutcomeState(
     }
 }
 
-interface OutcomeUserInteractions : PadUserInteractions {
-    fun onMessageDismissed()
+interface OutcomeUserInteractions : PadUserInteractions, SnackbarInteractions {
     fun onClickCategory(category: Pair<CategoryUI, Boolean>)
     fun onDescriptionChanged(description: String)
     fun onIsFixedOutcomeChanged(value: Boolean)

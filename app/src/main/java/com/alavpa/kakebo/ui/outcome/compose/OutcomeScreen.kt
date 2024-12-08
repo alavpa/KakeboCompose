@@ -13,20 +13,18 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import com.alavpa.kakebo.R
 import com.alavpa.kakebo.ui.components.CategoryPill
-import com.alavpa.kakebo.ui.components.VerticalSpacer
 import com.alavpa.kakebo.ui.components.Pad
+import com.alavpa.kakebo.ui.components.VerticalSpacer
 import com.alavpa.kakebo.ui.outcome.OutcomeState
 import com.alavpa.kakebo.ui.outcome.OutcomeUserInteractions
 import com.alavpa.kakebo.ui.theme.KakeboTheme
@@ -35,15 +33,12 @@ import com.alavpa.kakebo.ui.theme.KakeboTheme
 fun OutcomeScreen(
     state: OutcomeState,
     userInteractions: OutcomeUserInteractions,
-    snackbarHostState: SnackbarHostState
+    showSnackbarMessage: suspend (String) -> Unit
 ) {
     val successMessage = stringResource(R.string.outcome_success_message)
     LaunchedEffect(state.showSuccess) {
         if (state.showSuccess) {
-            val result = snackbarHostState.showSnackbar(message = successMessage)
-            if (result == SnackbarResult.Dismissed) {
-                userInteractions.onMessageDismissed()
-            }
+            showSnackbarMessage(successMessage)
         }
     }
     Box(Modifier.fillMaxSize()) {
@@ -98,7 +93,7 @@ fun OutcomeScreenPreview() {
         OutcomeScreen(
             OutcomeState.INITIAL,
             OutcomeUserInteractions.Stub(),
-            remember { SnackbarHostState() }
+            {}
         )
     }
 }

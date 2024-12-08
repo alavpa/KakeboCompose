@@ -9,6 +9,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -25,6 +26,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.alavpa.kakebo.ui.components.BottomNavItem
+import com.alavpa.kakebo.ui.components.SnackbarInteractions
 import com.alavpa.kakebo.ui.outcome.OutcomeViewModel
 import com.alavpa.kakebo.ui.outcome.compose.OutcomeScreen
 import com.alavpa.kakebo.ui.theme.KakeboTheme
@@ -90,7 +92,10 @@ fun OutcomeScreenContainer(
     viewModel: OutcomeViewModel = hiltViewModel(),
     snackbarHostState: SnackbarHostState
 ) {
-    OutcomeScreen(viewModel.state.collectAsState().value, viewModel, snackbarHostState)
+    val state by viewModel.state.collectAsState()
+    OutcomeScreen(state, viewModel) { successMessage ->
+        showSnackbarMessage(snackbarHostState, successMessage, viewModel)
+    }
 }
 
 @Composable
@@ -104,5 +109,16 @@ fun IncomeScreenContainer() {
 fun StatisticsScreenContainer() {
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Text("STATISTICS", style = KakeboTheme.typography.titleLarge)
+    }
+}
+
+private suspend fun showSnackbarMessage(
+    snackbarHostState: SnackbarHostState,
+    message: String,
+    snackbarInteractions: SnackbarInteractions
+) {
+    val result = snackbarHostState.showSnackbar(message = message)
+    if (result == SnackbarResult.Dismissed) {
+        snackbarInteractions.onMessageDismissed()
     }
 }
