@@ -6,6 +6,4 @@ import kotlinx.coroutines.flow.Flow
 interface KakeboRepository {
     suspend fun insertNewLine(line: Line)
     fun getAllLines(): Flow<List<Line>>
-    fun getOutcomeLines(): Flow<List<Line>>
-    fun getIncomeLines(): Flow<List<Line>>
 }

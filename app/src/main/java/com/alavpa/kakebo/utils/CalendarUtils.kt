@@ -28,4 +28,7 @@ class CalendarUtils @Inject constructor() {
             timeInMillis = timestamp
         }.get(Calendar.YEAR)
     }
+
+    fun getCurrentMonth(): Int = Calendar.getInstance().get(Calendar.MONTH)
+    fun getCurrentYear(): Int = Calendar.getInstance().get(Calendar.YEAR)
 }
