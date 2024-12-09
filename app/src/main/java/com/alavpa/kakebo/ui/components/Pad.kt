@@ -39,7 +39,7 @@ fun Pad(userInteractions: PadUserInteractions, isIncome: Boolean, modifier: Modi
             PadKey("2", onClick = { userInteractions.onClickNumber("2") })
             PadKey("5", onClick = { userInteractions.onClickNumber("5") })
             PadKey("8", onClick = { userInteractions.onClickNumber("8") })
-            PadKey("0", onClick = { userInteractions.onClickNumber("8") })
+            PadKey("0", onClick = { userInteractions.onClickNumber("0") })
         }
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             PadKey("3", onClick = { userInteractions.onClickNumber("3") })

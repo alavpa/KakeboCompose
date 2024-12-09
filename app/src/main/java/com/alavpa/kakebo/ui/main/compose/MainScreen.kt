@@ -1,6 +1,5 @@
 package com.alavpa.kakebo.ui.main.compose
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
@@ -17,7 +16,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -29,7 +27,8 @@ import com.alavpa.kakebo.ui.components.BottomNavItem
 import com.alavpa.kakebo.ui.components.SnackbarInteractions
 import com.alavpa.kakebo.ui.lines.AddLinesViewModel
 import com.alavpa.kakebo.ui.lines.compose.AddLinesScreen
-import com.alavpa.kakebo.ui.theme.KakeboTheme
+import com.alavpa.kakebo.ui.statistics.StatisticsViewModel
+import com.alavpa.kakebo.ui.statistics.compose.StatisticsScreen
 
 @Composable
 fun MainScreen() {
@@ -118,10 +117,9 @@ fun IncomeScreenContainer(
 }
 
 @Composable
-fun StatisticsScreenContainer() {
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("STATISTICS", style = KakeboTheme.typography.regularText)
-    }
+fun StatisticsScreenContainer(viewModel: StatisticsViewModel = hiltViewModel()) {
+    val state by viewModel.state.collectAsState()
+    StatisticsScreen(state, viewModel)
 }
 
 private suspend fun showSnackbarMessage(

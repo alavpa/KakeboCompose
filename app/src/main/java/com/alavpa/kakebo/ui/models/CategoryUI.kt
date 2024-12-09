@@ -9,5 +9,5 @@ enum class CategoryUI(@StringRes val resId: Int) {
     Culture(R.string.culture),
     Extras(R.string.extras),
     Salary(R.string.salary),
-    Gifts(R.string.Gifts)
+    Gifts(R.string.gifts)
 }

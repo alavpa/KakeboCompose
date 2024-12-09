@@ -11,5 +11,8 @@
     <string name="culture">Culture</string>
     <string name="extras">Extras</string>
     <string name="salary">Salary</string>
-    <string name="Gifts">Gifts</string>
+    <string name="gifts">Gifts</string>
+    <string name="budget">Budget</string>
+    <string name="budget_with_savings">Budget with savings:</string>
+    <string name="operation" translatable="false">%1$s - %2$s = %3$s</string>
 </resources>
