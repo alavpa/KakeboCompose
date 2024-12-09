@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alavpa.kakebo.domain.models.Type
 import com.alavpa.kakebo.domain.usecases.GetAllLines
+import com.alavpa.kakebo.domain.usecases.GetSavings
+import com.alavpa.kakebo.domain.usecases.SetSavings
 import com.alavpa.kakebo.ui.mappers.LineUIMapper
 import com.alavpa.kakebo.ui.models.LineUI
 import com.alavpa.kakebo.utils.AmountUtils
@@ -11,13 +13,17 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.zip
 import kotlinx.coroutines.launch
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
 class StatisticsViewModel @Inject constructor(
     private val getLines: GetAllLines,
     private val amountUtils: AmountUtils,
+    private val setSavings: SetSavings,
+    private val getSavings: GetSavings,
     private val linesUIMapper: LineUIMapper
 ) : ViewModel(), StatisticsUserInteractions {
 
@@ -27,13 +33,14 @@ class StatisticsViewModel @Inject constructor(
 
     override fun onInitializeOnce() {
         viewModelScope.launch {
-            getLines().collect { lines ->
+            getLines().zip(getSavings()) { lines, savings ->
+                Pair(lines, savings)
+            }.collect { (lines, savings) ->
                 val income = lines.filter { it.type == Type.Income }
                     .sumOf { it.amount }
                 val outcome = lines.filter { it.type == Type.Outcome }
                     .sumOf { it.amount }
                 val budget = income - outcome
-                val savings = 0L
                 val budgetWithSavings = budget - savings
                 _state.update { currentState ->
                     currentState.copy(
@@ -41,7 +48,7 @@ class StatisticsViewModel @Inject constructor(
                         outcome = amountUtils.fromLongToCurrency(outcome),
                         budget = budget,
                         budgetText = amountUtils.fromLongToCurrency(budget),
-                        savings = savings.toString(),
+                        savings = String.format(Locale.ROOT, "%.2f", savings / 100.0),
                         budgetWithSavings = amountUtils.fromLongToCurrency(budgetWithSavings),
                         lines = lines.map { linesUIMapper.from(it) }
                     )
@@ -51,13 +58,16 @@ class StatisticsViewModel @Inject constructor(
     }
 
     override fun onSavingsChanged(value: String) {
-        _state.update { currentState ->
-            val longValue: Double = (value.toDoubleOrNull() ?: 0.0) * 100
-            val budgetWithSavings: Long = currentState.budget - longValue.toLong()
-            currentState.copy(
-                savings = value,
-                budgetWithSavings = amountUtils.fromLongToCurrency(budgetWithSavings)
-            )
+        viewModelScope.launch {
+            val longValue: Long = ((value.toDoubleOrNull() ?: 0.0) * 100).toLong()
+            setSavings(longValue)
+            _state.update { currentState ->
+                val budgetWithSavings: Long = currentState.budget - longValue
+                currentState.copy(
+                    savings = value,
+                    budgetWithSavings = amountUtils.fromLongToCurrency(budgetWithSavings)
+                )
+            }
         }
     }
 }

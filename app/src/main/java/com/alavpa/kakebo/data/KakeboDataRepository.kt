@@ -1,6 +1,8 @@
-package com.alavpa.kakebo.data.db
+package com.alavpa.kakebo.data
 
+import com.alavpa.kakebo.data.db.DbDatasource
 import com.alavpa.kakebo.data.mappers.LineDataMapper
+import com.alavpa.kakebo.data.preferences.KakeboDataStore
 import com.alavpa.kakebo.domain.KakeboRepository
 import com.alavpa.kakebo.domain.models.Line
 import kotlinx.coroutines.flow.Flow
@@ -9,7 +11,8 @@ import javax.inject.Inject
 
 class KakeboDataRepository @Inject constructor(
     private val dbDatasource: DbDatasource,
-    private val lineDataMapper: LineDataMapper
+    private val lineDataMapper: LineDataMapper,
+    private val kakeboDataStore: KakeboDataStore
 ) : KakeboRepository {
     override suspend fun insertNewLine(line: Line) {
         return dbDatasource.insert(lineDataMapper.from(line))
@@ -20,4 +23,10 @@ class KakeboDataRepository @Inject constructor(
             linesData.map { lineDataMapper.to(it) }
         }
     }
+
+    override suspend fun setSavings(savings: Long) {
+        kakeboDataStore.save(savings)
+    }
+
+    override fun getSavings(): Flow<Long> = kakeboDataStore.savingsFlow
 }
