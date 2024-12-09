@@ -13,15 +13,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.alavpa.kakebo.ui.components.BottomNavItem
 import com.alavpa.kakebo.ui.components.SnackbarInteractions
@@ -33,16 +32,17 @@ import com.alavpa.kakebo.ui.statistics.compose.StatisticsScreen
 @Composable
 fun MainScreen() {
     val snackbarHostState = remember { SnackbarHostState() }
-    var navigationSelectedItem by remember { mutableIntStateOf(1) }
     val navController = rememberNavController()
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         bottomBar = {
             NavigationBar {
-                BottomNavItem.navItems.forEachIndexed { index, navigationItem ->
+                val backStackEntry by navController.currentBackStackEntryAsState()
+                val currentRoute = backStackEntry?.destination?.route
+                BottomNavItem.navItems.forEach { navigationItem ->
                     NavigationBarItem(
-                        selected = index == navigationSelectedItem,
+                        selected = currentRoute == navigationItem.route,
                         label = {
                             Text(stringResource(navigationItem.label))
                         },
@@ -53,9 +53,9 @@ fun MainScreen() {
                             )
                         },
                         onClick = {
-                            navigationSelectedItem = index
                             navController.navigate(navigationItem.route) {
-                                popUpTo(navController.graph.findStartDestination().id) {
+                                val destination = navController.graph.findStartDestination().id
+                                popUpTo(destination) {
                                     saveState = true
                                 }
                                 launchSingleTop = true
