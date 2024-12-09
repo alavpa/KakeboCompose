@@ -5,14 +5,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alavpa.kakebo.domain.models.Line
 import com.alavpa.kakebo.domain.models.Type
-import com.alavpa.kakebo.domain.usecases.GetAllLines
 import com.alavpa.kakebo.domain.usecases.InsertNewLine
 import com.alavpa.kakebo.ui.components.PadUserInteractions
 import com.alavpa.kakebo.ui.components.SnackbarInteractions
 import com.alavpa.kakebo.ui.mappers.CategoryUIMapper
-import com.alavpa.kakebo.ui.mappers.LineUIMapper
 import com.alavpa.kakebo.ui.models.CategoryUI
-import com.alavpa.kakebo.ui.models.LineUI
 import com.alavpa.kakebo.utils.AmountUtils
 import com.alavpa.kakebo.utils.CalendarUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,10 +22,8 @@ import javax.inject.Inject
 @HiltViewModel
 class AddLinesViewModel @Inject constructor(
     private val insertNewLine: InsertNewLine,
-    private val getLines: GetAllLines,
     private val calendarUtils: CalendarUtils,
     private val categoryUIMapper: CategoryUIMapper,
-    private val lineUIMapper: LineUIMapper,
     private val amountUtils: AmountUtils
 ) : ViewModel(), AddLinesUserInteractions {
 
@@ -49,14 +44,11 @@ class AddLinesViewModel @Inject constructor(
                 Pair(CategoryUI.Gifts, false),
                 Pair(CategoryUI.Extras, false)
             )
-            getLines().collect { lines ->
-                _state.update { currentState ->
-                    currentState.copy(
-                        lines = lines.map { lineUIMapper.from(it) },
-                        formattedText = amountUtils.reset(),
-                        categories = if (isIncome) incomeCategories else outcomeCategories
-                    )
-                }
+            _state.update { currentState ->
+                currentState.copy(
+                    formattedText = amountUtils.reset(),
+                    categories = if (isIncome) incomeCategories else outcomeCategories
+                )
             }
         }
     }
@@ -115,7 +107,6 @@ class AddLinesViewModel @Inject constructor(
                 _state.update { currentState ->
                     AddLinesState.INITIAL.copy(
                         showSuccess = true,
-                        lines = currentState.lines,
                         formattedText = amountUtils.reset()
                     )
                 }
@@ -150,7 +141,6 @@ class AddLinesViewModel @Inject constructor(
 }
 
 data class AddLinesState(
-    val lines: List<LineUI>,
     val formattedText: String,
     val currentText: String,
     val description: String,
@@ -160,7 +150,6 @@ data class AddLinesState(
 ) {
     companion object {
         val INITIAL = AddLinesState(
-            lines = emptyList(),
             formattedText = "",
             currentText = "",
             description = "",
