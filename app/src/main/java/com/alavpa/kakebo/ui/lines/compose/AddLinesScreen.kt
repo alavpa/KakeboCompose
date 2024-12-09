@@ -104,10 +104,9 @@ fun AddLinesScreen(
 fun OutcomeScreenPreview() {
     KakeboTheme {
         AddLinesScreen(
-            AddLinesState.INITIAL,
+            state = AddLinesState.INITIAL,
             isIncome = false,
-            AddLinesUserInteractions.Stub(),
-            {}
-        )
+            userInteractions = AddLinesUserInteractions.Stub(),
+        ) {}
     }
 }
