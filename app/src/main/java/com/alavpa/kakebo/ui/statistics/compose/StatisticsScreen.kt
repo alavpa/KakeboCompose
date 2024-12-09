@@ -36,7 +36,7 @@ fun StatisticsScreen(state: StatisticsState, userInteractions: StatisticsUserInt
     ) {
         item {
             Column {
-                Text(stringResource(R.string.budget), style = KakeboTheme.typography.regularText)
+                Text(stringResource(R.string.budget), style = KakeboTheme.typography.titleLarge)
                 VerticalSpacer(KakeboTheme.space.s)
                 Text(
                     text = stringResource(
@@ -45,7 +45,7 @@ fun StatisticsScreen(state: StatisticsState, userInteractions: StatisticsUserInt
                         state.outcome,
                         state.budgetText
                     ),
-                    style = KakeboTheme.typography.regularText
+                    style = KakeboTheme.typography.titleLarge
                 )
                 VerticalSpacer(KakeboTheme.space.l)
                 Row(
@@ -53,16 +53,17 @@ fun StatisticsScreen(state: StatisticsState, userInteractions: StatisticsUserInt
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
+                        modifier = Modifier.weight(1.0f),
                         text = stringResource(R.string.budget_with_savings),
-                        style = KakeboTheme.typography.regularText,
-                        modifier = Modifier.weight(1f)
+                        style = KakeboTheme.typography.titleLarge,
                     )
                     HorizontalSpacer(KakeboTheme.space.s)
                     OutlinedTextField(
+                        modifier = Modifier.weight(0.5f),
                         value = state.savings,
                         onValueChange = userInteractions::onSavingsChanged,
-                        modifier = Modifier.weight(1f),
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        textStyle = KakeboTheme.typography.titleLarge
                     )
                 }
                 VerticalSpacer(KakeboTheme.space.l)
@@ -70,10 +71,10 @@ fun StatisticsScreen(state: StatisticsState, userInteractions: StatisticsUserInt
                     text = stringResource(
                         R.string.operation,
                         state.budgetText,
-                        state.savings,
+                        state.savingsText,
                         state.budgetWithSavings
                     ),
-                    style = KakeboTheme.typography.regularText
+                    style = KakeboTheme.typography.titleLarge
                 )
             }
         }
@@ -110,6 +111,16 @@ fun StatisticsScreen(state: StatisticsState, userInteractions: StatisticsUserInt
 @Composable
 fun StatisticsPreview() {
     KakeboTheme {
-        StatisticsScreen(StatisticsState.INITIAL, StatisticsUserInteractions.Stub())
+        StatisticsScreen(
+            state = StatisticsState.INITIAL.copy(
+                income = "100",
+                outcome = "50",
+                budgetText = "50",
+                budget = 0,
+                savings = "30",
+                budgetWithSavings = "20"
+            ),
+            userInteractions = StatisticsUserInteractions.Stub()
+        )
     }
 }

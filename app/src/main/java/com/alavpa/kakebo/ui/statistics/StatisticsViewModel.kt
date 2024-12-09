@@ -15,6 +15,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.flow.zip
 import kotlinx.coroutines.launch
+import java.text.DecimalFormat
+import java.text.ParseException
 import java.util.Locale
 import javax.inject.Inject
 
@@ -49,6 +51,7 @@ class StatisticsViewModel @Inject constructor(
                         budget = budget,
                         budgetText = amountUtils.fromLongToCurrency(budget),
                         savings = String.format(Locale.ROOT, "%.2f", savings / 100.0),
+                        savingsText = amountUtils.fromLongToCurrency(savings),
                         budgetWithSavings = amountUtils.fromLongToCurrency(budgetWithSavings),
                         lines = lines.map { linesUIMapper.from(it) }
                     )
@@ -58,13 +61,22 @@ class StatisticsViewModel @Inject constructor(
     }
 
     override fun onSavingsChanged(value: String) {
+        _state.update { currentState ->
+            currentState.copy(savings = value)
+        }
         viewModelScope.launch {
-            val longValue: Long = ((value.toDoubleOrNull() ?: 0.0) * 100).toLong()
+
+            val doubleValue = try {
+                DecimalFormat.getInstance(Locale.ROOT).parse(value)?.toFloat() ?: 0f
+            } catch (parseException: ParseException) {
+                0f
+            }
+            val longValue: Long = (doubleValue * 100f).toLong()
             setSavings(longValue)
             _state.update { currentState ->
                 val budgetWithSavings: Long = currentState.budget - longValue
                 currentState.copy(
-                    savings = value,
+                    savingsText = amountUtils.fromLongToCurrency(longValue),
                     budgetWithSavings = amountUtils.fromLongToCurrency(budgetWithSavings)
                 )
             }
@@ -78,6 +90,7 @@ data class StatisticsState(
     val budget: Long,
     val budgetText: String,
     val savings: String,
+    val savingsText: String,
     val budgetWithSavings: String,
     val lines: List<LineUI>
 ) {
@@ -88,6 +101,7 @@ data class StatisticsState(
             budget = 0,
             budgetText = "",
             savings = "",
+            savingsText = "",
             budgetWithSavings = "",
             lines = emptyList()
         )
