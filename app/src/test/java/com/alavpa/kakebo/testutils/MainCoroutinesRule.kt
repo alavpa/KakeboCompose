@@ -1,4 +1,4 @@
-package com.alavpa.kakebo.utils
+package com.alavpa.kakebo.testutils
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
