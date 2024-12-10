@@ -5,6 +5,7 @@ import com.alavpa.kakebo.domain.KakeboRepository
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -22,6 +23,15 @@ class GetSavingsTest {
             assertEquals(1200, awaitItem())
             verify { repository.getSavings() }
             awaitComplete()
+        }
+    }
+
+    @Test
+    fun `when repository launch exception should emit exception`() = runTest {
+        every { repository.getSavings() } returns flow { throw IllegalStateException() }
+
+        useCase().test {
+            awaitError()
         }
     }
 }

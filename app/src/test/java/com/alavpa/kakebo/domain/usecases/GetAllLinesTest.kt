@@ -6,6 +6,7 @@ import com.alavpa.kakebo.domain.models.Line
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -28,8 +29,8 @@ class GetAllLinesTest {
     }
 
     @Test
-    fun `when repository launch exception should throw exception`() = runTest {
-        every { repository.getAllLines() } throws IllegalStateException()
+    fun `when repository throw exception should emit exception`() = runTest {
+        every { repository.getAllLines() } returns flow { throw IllegalStateException() }
 
         useCase().test {
             awaitError()
