@@ -66,7 +66,6 @@ class StatisticsViewModel @Inject constructor(
             currentState.copy(savings = value)
         }
         viewModelScope.launch {
-
             val doubleValue = try {
                 DecimalFormat.getInstance(Locale.ROOT).parse(value)?.toFloat() ?: 0f
             } catch (parseException: ParseException) {

@@ -20,6 +20,7 @@ import com.alavpa.kakebo.R
 import com.alavpa.kakebo.presentation.components.HorizontalSpacer
 import com.alavpa.kakebo.presentation.components.InitializeOnce
 import com.alavpa.kakebo.presentation.components.VerticalSpacer
+import com.alavpa.kakebo.presentation.models.LineUI
 import com.alavpa.kakebo.presentation.ui.statistics.StatisticsState
 import com.alavpa.kakebo.presentation.ui.statistics.StatisticsUserInteractions
 import com.alavpa.kakebo.presentation.theme.KakeboTheme
@@ -29,56 +30,55 @@ fun StatisticsScreen(state: StatisticsState, userInteractions: StatisticsUserInt
     InitializeOnce {
         userInteractions.onInitializeOnce()
     }
-    LazyColumn(
-        Modifier
-            .fillMaxSize()
-            .padding(KakeboTheme.space.horizontal)
-    ) {
-        item {
-            Column {
-                Text(stringResource(R.string.budget), style = KakeboTheme.typography.titleLarge)
-                VerticalSpacer(KakeboTheme.space.s)
-                Text(
-                    text = stringResource(
-                        R.string.operation,
-                        state.income,
-                        state.outcome,
-                        state.budgetText
-                    ),
-                    style = KakeboTheme.typography.titleLarge
-                )
-                VerticalSpacer(KakeboTheme.space.l)
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        modifier = Modifier.weight(1.0f),
-                        text = stringResource(R.string.budget_with_savings),
-                        style = KakeboTheme.typography.titleLarge,
-                    )
-                    HorizontalSpacer(KakeboTheme.space.s)
-                    OutlinedTextField(
-                        modifier = Modifier.weight(0.5f),
-                        value = state.savings,
-                        onValueChange = userInteractions::onSavingsChanged,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        textStyle = KakeboTheme.typography.titleLarge
-                    )
-                }
-                VerticalSpacer(KakeboTheme.space.l)
-                Text(
-                    text = stringResource(
-                        R.string.operation,
-                        state.budgetText,
-                        state.savingsText,
-                        state.budgetWithSavings
-                    ),
-                    style = KakeboTheme.typography.titleLarge
-                )
-            }
+    Column(Modifier.fillMaxSize().padding(KakeboTheme.space.horizontal)) {
+        Text(stringResource(R.string.budget), style = KakeboTheme.typography.titleLarge)
+        VerticalSpacer(KakeboTheme.space.s)
+        Text(
+            text = stringResource(
+                R.string.operation,
+                state.income,
+                state.outcome,
+                state.budgetText
+            ),
+            style = KakeboTheme.typography.titleLarge
+        )
+        VerticalSpacer(KakeboTheme.space.l)
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(
+                modifier = Modifier.weight(1.0f),
+                text = stringResource(R.string.budget_with_savings),
+                style = KakeboTheme.typography.titleLarge,
+            )
+            HorizontalSpacer(KakeboTheme.space.s)
+            OutlinedTextField(
+                modifier = Modifier.weight(0.5f),
+                value = state.savings,
+                onValueChange = userInteractions::onSavingsChanged,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                textStyle = KakeboTheme.typography.titleLarge
+            )
         }
-        items(state.lines) { line ->
+        VerticalSpacer(KakeboTheme.space.l)
+        Text(
+            text = stringResource(
+                R.string.operation,
+                state.budgetText,
+                state.savingsText,
+                state.budgetWithSavings
+            ),
+            style = KakeboTheme.typography.titleLarge
+        )
+        LinesList(state.lines)
+    }
+}
+
+@Composable
+private fun LinesList(lines: List<LineUI>) {
+    LazyColumn(Modifier.fillMaxWidth()) {
+        items(lines) { line ->
             val colorText = if (line.isIncome) {
                 KakeboTheme.colorSchema.color8
             } else {

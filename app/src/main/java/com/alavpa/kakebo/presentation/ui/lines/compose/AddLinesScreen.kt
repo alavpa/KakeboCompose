@@ -66,7 +66,7 @@ fun AddLinesScreen(
                     )
                 }
             )
-            Text("Repeat each month.")
+            Text(stringResource(R.string.repeat_per_month))
         }
 
         VerticalSpacer(height = KakeboTheme.space.vertical)
@@ -76,8 +76,8 @@ fun AddLinesScreen(
         ) {
             items(state.categories) { category ->
                 CategoryPill(
-                    stringResource(category.first.resId),
-                    category.second
+                    text = stringResource(category.resId),
+                    isSelected = category == state.selectedCategory
                 ) {
                     userInteractions.onClickCategory(category)
                 }

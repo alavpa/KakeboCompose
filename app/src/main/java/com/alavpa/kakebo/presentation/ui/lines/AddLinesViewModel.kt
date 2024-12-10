@@ -1,6 +1,5 @@
 package com.alavpa.kakebo.presentation.ui.lines
 
-import android.util.Pair
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -35,15 +34,15 @@ class AddLinesViewModel @Inject constructor(
     override fun onInitializeOnce(isIncome: Boolean) {
         viewModelScope.launch {
             val outcomeCategories = listOf(
-                Pair(CategoryUI.Survival, false),
-                Pair(CategoryUI.Leisure, false),
-                Pair(CategoryUI.Culture, false),
-                Pair(CategoryUI.Extras, false)
+                CategoryUI.Survival,
+                CategoryUI.Leisure,
+                CategoryUI.Culture,
+                CategoryUI.Extras
             )
             val incomeCategories = listOf(
-                Pair(CategoryUI.Salary, false),
-                Pair(CategoryUI.Gifts, false),
-                Pair(CategoryUI.Extras, false)
+                CategoryUI.Salary,
+                CategoryUI.Gifts,
+                CategoryUI.Extras
             )
             _state.update { currentState ->
                 currentState.copy(
@@ -99,13 +98,11 @@ class AddLinesViewModel @Inject constructor(
                     description = description,
                     timestamp = calendarUtils.getCurrentTimestamp(),
                     type = if (isIncome) Type.Income else Type.Outcome,
-                    category = categoryUIMapper.to(
-                        categories.find { it.second }?.first ?: CategoryUI.Extras
-                    ),
+                    category = categoryUIMapper.to(selectedCategory ?: CategoryUI.Extras),
                     isFixed = isFixedOutcome
                 )
                 insertNewLine(line)
-                _state.update { currentState ->
+                _state.update {
                     AddLinesState.INITIAL.copy(
                         showSuccess = true,
                         formattedText = amountUtils.reset()
@@ -115,15 +112,10 @@ class AddLinesViewModel @Inject constructor(
         }
     }
 
-    override fun onClickCategory(category: Pair<CategoryUI, Boolean>) {
+    override fun onClickCategory(category: CategoryUI) {
         _state.update { currentState ->
             currentState.copy(
-                categories = currentState.categories.map { currentCategory ->
-                    if (category == currentCategory) Pair(
-                        category.first,
-                        !category.second
-                    ) else Pair(currentCategory.first, false)
-                }
+                selectedCategory = category
             )
         }
     }
@@ -146,7 +138,8 @@ data class AddLinesState(
     val formattedText: String,
     val currentText: String,
     val description: String,
-    val categories: List<Pair<CategoryUI, Boolean>>,
+    val categories: List<CategoryUI>,
+    val selectedCategory: CategoryUI?,
     val showSuccess: Boolean,
     val isFixedOutcome: Boolean
 ) {
@@ -155,12 +148,8 @@ data class AddLinesState(
             formattedText = "",
             currentText = "",
             description = "",
-            categories = listOf(
-                Pair(CategoryUI.Survival, false),
-                Pair(CategoryUI.Leisure, false),
-                Pair(CategoryUI.Culture, false),
-                Pair(CategoryUI.Extras, false)
-            ),
+            categories = emptyList(),
+            selectedCategory = null,
             showSuccess = false,
             isFixedOutcome = false
         )
@@ -168,7 +157,7 @@ data class AddLinesState(
 }
 
 interface AddLinesUserInteractions : PadUserInteractions, SnackbarInteractions {
-    fun onClickCategory(category: Pair<CategoryUI, Boolean>)
+    fun onClickCategory(category: CategoryUI)
     fun onDescriptionChanged(description: String)
     fun onIsFixedOutcomeChanged(value: Boolean)
     fun onInitializeOnce(isIncome: Boolean)
@@ -178,7 +167,7 @@ interface AddLinesUserInteractions : PadUserInteractions, SnackbarInteractions {
         override fun onClickNumber(number: String) = Unit
         override fun onClickDelete() = Unit
         override fun onClickOk(isIncome: Boolean) = Unit
-        override fun onClickCategory(category: Pair<CategoryUI, Boolean>) = Unit
+        override fun onClickCategory(category: CategoryUI) = Unit
         override fun onDescriptionChanged(description: String) = Unit
         override fun onIsFixedOutcomeChanged(value: Boolean) = Unit
         override fun onInitializeOnce(isIncome: Boolean) = Unit
