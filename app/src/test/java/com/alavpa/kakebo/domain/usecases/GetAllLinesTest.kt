@@ -26,4 +26,13 @@ class GetAllLinesTest {
             awaitComplete()
         }
     }
+
+    @Test
+    fun `when repository launch exception should throw exception`() = runTest {
+        every { repository.getAllLines() } throws IllegalStateException()
+
+        useCase().test {
+            awaitError()
+        }
+    }
 }

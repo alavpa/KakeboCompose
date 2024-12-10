@@ -1,6 +1,7 @@
 package com.alavpa.kakebo.presentation.ui.lines
 
 import android.util.Pair
+import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alavpa.kakebo.domain.models.Line
@@ -140,6 +141,7 @@ class AddLinesViewModel @Inject constructor(
     }
 }
 
+@Immutable
 data class AddLinesState(
     val formattedText: String,
     val currentText: String,

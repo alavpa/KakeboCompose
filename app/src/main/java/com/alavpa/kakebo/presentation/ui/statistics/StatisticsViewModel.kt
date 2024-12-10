@@ -1,5 +1,6 @@
 package com.alavpa.kakebo.presentation.ui.statistics
 
+import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alavpa.kakebo.domain.models.Type
@@ -84,6 +85,7 @@ class StatisticsViewModel @Inject constructor(
     }
 }
 
+@Immutable
 data class StatisticsState(
     val income: String,
     val outcome: String,
