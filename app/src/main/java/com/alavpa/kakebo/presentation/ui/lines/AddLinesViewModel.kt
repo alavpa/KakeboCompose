@@ -29,7 +29,7 @@ class AddLinesViewModel @Inject constructor(
     private val calendarUtils: CalendarUtils,
     private val categoryUIMapper: CategoryUIMapper,
     private val amountUtils: AmountUtils,
-    private val initialState: AddLinesState = AddLinesState.INITIAL,
+    initialState: AddLinesState = AddLinesState.INITIAL,
 ) : ViewModel(), AddLinesUserInteractions {
 
     private val _state = MutableStateFlow(initialState)
@@ -98,8 +98,8 @@ class AddLinesViewModel @Inject constructor(
                     isFixed = isFixed
                 )
                 insertNewLine(line)
-                _state.update {
-                    initialState.copy(
+                _state.update { currentState ->
+                    currentState.copy(
                         showSuccess = true,
                         currentText = "",
                         formattedText = amountUtils.reset(),
