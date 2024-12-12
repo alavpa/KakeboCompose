@@ -11,8 +11,11 @@ import com.alavpa.kakebo.presentation.mappers.LineUIMapper
 import com.alavpa.kakebo.presentation.models.LineUI
 import com.alavpa.kakebo.utils.AmountUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.flow.zip
 import kotlinx.coroutines.launch
@@ -61,24 +64,29 @@ class StatisticsViewModel @Inject constructor(
         }
     }
 
+    @OptIn(FlowPreview::class)
     override fun onSavingsChanged(value: String) {
         _state.update { currentState ->
             currentState.copy(savings = value)
         }
         viewModelScope.launch {
-            val doubleValue = try {
-                DecimalFormat.getInstance(Locale.ROOT).parse(value)?.toFloat() ?: 0f
-            } catch (parseException: ParseException) {
-                0f
-            }
-            val longValue: Long = (doubleValue * 100f).toLong()
-            setSavings(longValue)
-            _state.update { currentState ->
-                val budgetWithSavings: Long = currentState.budget - longValue
-                currentState.copy(
-                    savingsText = amountUtils.fromLongToCurrency(longValue),
-                    budgetWithSavings = amountUtils.fromLongToCurrency(budgetWithSavings)
-                )
+            flow {
+                val doubleValue = try {
+                    DecimalFormat.getInstance(Locale.ROOT).parse(value)?.toFloat() ?: 0f
+                } catch (parseException: ParseException) {
+                    0f
+                }
+                val longValue: Long = (doubleValue * 100f).toLong()
+                setSavings(longValue)
+                emit(longValue)
+            }.debounce(500L).collect { longValue ->
+                _state.update { currentState ->
+                    val budgetWithSavings: Long = currentState.budget - longValue
+                    currentState.copy(
+                        savingsText = amountUtils.fromLongToCurrency(longValue),
+                        budgetWithSavings = amountUtils.fromLongToCurrency(budgetWithSavings)
+                    )
+                }
             }
         }
     }
