@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alavpa.kakebo.domain.models.Line
 import com.alavpa.kakebo.domain.models.Type
+import com.alavpa.kakebo.domain.usecases.GetCategories
 import com.alavpa.kakebo.domain.usecases.InsertNewLine
 import com.alavpa.kakebo.presentation.components.PadUserInteractions
 import com.alavpa.kakebo.presentation.components.SnackbarInteractions
@@ -19,36 +20,31 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+private const val MAX_DIGITS = 8
+
 @HiltViewModel
 class AddLinesViewModel @Inject constructor(
     private val insertNewLine: InsertNewLine,
+    private val getCategories: GetCategories,
     private val calendarUtils: CalendarUtils,
     private val categoryUIMapper: CategoryUIMapper,
-    private val amountUtils: AmountUtils
+    private val amountUtils: AmountUtils,
+    private val initialState: AddLinesState = AddLinesState.INITIAL,
 ) : ViewModel(), AddLinesUserInteractions {
 
-    private val _state = MutableStateFlow(AddLinesState.INITIAL)
+    private val _state = MutableStateFlow(initialState)
     val state: StateFlow<AddLinesState>
         get() = _state
 
     override fun onInitializeOnce(isIncome: Boolean) {
         viewModelScope.launch {
-            val outcomeCategories = listOf(
-                CategoryUI.Survival,
-                CategoryUI.Leisure,
-                CategoryUI.Culture,
-                CategoryUI.Extras
-            )
-            val incomeCategories = listOf(
-                CategoryUI.Salary,
-                CategoryUI.Gifts,
-                CategoryUI.Extras
-            )
-            _state.update { currentState ->
-                currentState.copy(
-                    formattedText = amountUtils.reset(),
-                    categories = if (isIncome) incomeCategories else outcomeCategories
-                )
+            getCategories(isIncome).collect { categories ->
+                _state.update { currentState ->
+                    currentState.copy(
+                        formattedText = amountUtils.reset(),
+                        categories = categories.map { category -> categoryUIMapper.from(category) }
+                    )
+                }
             }
         }
     }
@@ -62,7 +58,7 @@ class AddLinesViewModel @Inject constructor(
     override fun onClickNumber(number: String) {
         _state.update { currentState ->
             val currentText = "${currentState.currentText}$number"
-            if (currentText.length > 9) {
+            if (currentText.length > MAX_DIGITS) {
                 currentState
             } else {
                 currentState.copy(
@@ -99,13 +95,15 @@ class AddLinesViewModel @Inject constructor(
                     timestamp = calendarUtils.getCurrentTimestamp(),
                     type = if (isIncome) Type.Income else Type.Outcome,
                     category = categoryUIMapper.to(selectedCategory ?: CategoryUI.Extras),
-                    isFixed = isFixedOutcome
+                    isFixed = isFixed
                 )
                 insertNewLine(line)
                 _state.update {
-                    AddLinesState.INITIAL.copy(
+                    initialState.copy(
                         showSuccess = true,
-                        formattedText = amountUtils.reset()
+                        currentText = "",
+                        formattedText = amountUtils.reset(),
+                        description = ""
                     )
                 }
             }
@@ -114,9 +112,8 @@ class AddLinesViewModel @Inject constructor(
 
     override fun onClickCategory(category: CategoryUI) {
         _state.update { currentState ->
-            currentState.copy(
-                selectedCategory = category
-            )
+            val selectedCategory = if (currentState.selectedCategory == category) null else category
+            currentState.copy(selectedCategory = selectedCategory)
         }
     }
 
@@ -128,7 +125,7 @@ class AddLinesViewModel @Inject constructor(
 
     override fun onIsFixedOutcomeChanged(value: Boolean) {
         _state.update { currentState ->
-            currentState.copy(isFixedOutcome = value)
+            currentState.copy(isFixed = value)
         }
     }
 }
@@ -141,7 +138,7 @@ data class AddLinesState(
     val categories: List<CategoryUI>,
     val selectedCategory: CategoryUI?,
     val showSuccess: Boolean,
-    val isFixedOutcome: Boolean
+    val isFixed: Boolean
 ) {
     companion object {
         val INITIAL = AddLinesState(
@@ -151,7 +148,7 @@ data class AddLinesState(
             categories = emptyList(),
             selectedCategory = null,
             showSuccess = false,
-            isFixedOutcome = false
+            isFixed = false
         )
     }
 }

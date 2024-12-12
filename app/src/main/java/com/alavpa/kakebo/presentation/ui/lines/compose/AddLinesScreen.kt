@@ -24,9 +24,9 @@ import com.alavpa.kakebo.presentation.components.CategoryPill
 import com.alavpa.kakebo.presentation.components.InitializeOnce
 import com.alavpa.kakebo.presentation.components.Pad
 import com.alavpa.kakebo.presentation.components.VerticalSpacer
-import com.alavpa.kakebo.presentation.ui.lines.AddLinesState
 import com.alavpa.kakebo.presentation.ui.lines.AddLinesUserInteractions
 import com.alavpa.kakebo.presentation.theme.KakeboTheme
+import com.alavpa.kakebo.presentation.ui.lines.AddLinesState
 
 @Composable
 fun AddLinesScreen(
@@ -59,11 +59,9 @@ fun AddLinesScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Checkbox(
-                checked = state.isFixedOutcome,
+                checked = state.isFixed,
                 onCheckedChange = { isFixed ->
-                    userInteractions.onIsFixedOutcomeChanged(
-                        isFixed
-                    )
+                    userInteractions.onIsFixedOutcomeChanged(isFixed)
                 }
             )
             Text(stringResource(R.string.repeat_per_month))

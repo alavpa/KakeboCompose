@@ -19,4 +19,13 @@ class CategoryUIMapper @Inject constructor() {
         Salary -> Category.Salary
         Gifts -> Category.Gifts
     }
+
+    fun from(category: Category): CategoryUI = when (category) {
+        Category.Survival -> Survival
+        Category.Leisure -> Leisure
+        Category.Culture -> Culture
+        Category.Extras -> Extras
+        Category.Salary -> Salary
+        Category.Gifts -> Gifts
+    }
 }
