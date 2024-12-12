@@ -30,10 +30,11 @@ class StatisticsViewModel @Inject constructor(
     private val amountUtils: AmountUtils,
     private val setSavings: SetSavings,
     private val getSavings: GetSavings,
-    private val linesUIMapper: LineUIMapper
+    private val linesUIMapper: LineUIMapper,
+    initialState: StatisticsState
 ) : ViewModel(), StatisticsUserInteractions {
 
-    private val _state = MutableStateFlow(StatisticsState.INITIAL)
+    private val _state = MutableStateFlow(initialState)
     val state: StateFlow<StatisticsState>
         get() = _state
 
@@ -93,7 +94,7 @@ class StatisticsViewModel @Inject constructor(
 }
 
 @Immutable
-data class StatisticsState(
+data class StatisticsState @Inject constructor(
     val income: String,
     val outcome: String,
     val budget: Long,
