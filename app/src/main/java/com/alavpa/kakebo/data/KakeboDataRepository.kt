@@ -14,8 +14,10 @@ class KakeboDataRepository @Inject constructor(
     private val lineDataMapper: LineDataMapper,
     private val kakeboDataStore: KakeboDataStore
 ) : KakeboRepository {
+
     override suspend fun insertNewLine(line: Line) {
-        return dbDatasource.insert(lineDataMapper.from(line))
+        val lineData = lineDataMapper.from(line)
+        dbDatasource.insert(lineData)
     }
 
     override fun getAllLines(): Flow<List<Line>> {
