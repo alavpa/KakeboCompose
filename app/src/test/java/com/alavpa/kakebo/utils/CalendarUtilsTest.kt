@@ -64,7 +64,7 @@ class CalendarUtilsTest {
         val expectedDate = Calendar.getInstance().apply { timeInMillis = TIMESTAMP }.time
         every { calendarUtils.format(expectedDate) } returns "Dec 2024"
 
-        val date = calendarUtils.getDateFormat(1734036363000)
+        val date = calendarUtils.getDateFormat(TIMESTAMP)
 
         assertEquals("Dec 2024", date)
     }
