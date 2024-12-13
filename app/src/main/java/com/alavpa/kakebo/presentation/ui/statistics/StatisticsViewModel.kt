@@ -19,8 +19,6 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.flow.zip
 import kotlinx.coroutines.launch
-import java.text.DecimalFormat
-import java.text.ParseException
 import java.util.Locale
 import javax.inject.Inject
 
@@ -72,12 +70,7 @@ class StatisticsViewModel @Inject constructor(
         }
         viewModelScope.launch {
             flow {
-                val doubleValue = try {
-                    DecimalFormat.getInstance(Locale.ROOT).parse(value)?.toFloat() ?: 0f
-                } catch (parseException: ParseException) {
-                    0f
-                }
-                val longValue: Long = (doubleValue * 100f).toLong()
+                val longValue: Long = amountUtils.parseAmountToLong(value)
                 setSavings(longValue)
                 emit(longValue)
             }.debounce(500L).collect { longValue ->

@@ -1,11 +1,22 @@
 package com.alavpa.kakebo.utils
 
+import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.text.NumberFormat
+import java.text.ParseException
 import java.util.Locale
 import javax.inject.Inject
 
 class AmountUtils @Inject constructor() {
+
+    fun parseAmountToLong(amount: String): Long {
+        val doubleValue = try {
+            DecimalFormat.getInstance(Locale.ROOT).parse(amount)?.toFloat() ?: 0f
+        } catch (parseException: ParseException) {
+            0f
+        }
+        return (doubleValue * 100f).toLong()
+    }
 
     fun fromTextToCurrency(amount: String): String {
         return amount.formatText()
