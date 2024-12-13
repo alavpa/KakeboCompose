@@ -17,5 +17,5 @@ class PreferencesDatasourceImpl @Inject constructor(
         dataStore.save(savings)
     }
 
-    override fun getSavings(): Flow<Long> = dataStore.savingsFlow
+    override fun getSavings(): Flow<Long> = dataStore.savingsFlow()
 }

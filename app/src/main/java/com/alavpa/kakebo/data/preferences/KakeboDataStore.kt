@@ -12,12 +12,15 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 
+private const val SAVINGS_KEY = "savings"
+
 @Singleton
 class KakeboDataStore @Inject constructor(@ApplicationContext val context: Context) {
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
-    private val savingsKey = longPreferencesKey("savings")
-    val savingsFlow: Flow<Long> = context.dataStore.data
+    private val savingsKey = longPreferencesKey(SAVINGS_KEY)
+
+    fun savingsFlow(): Flow<Long> = context.dataStore.data
         .map { preferences -> preferences[savingsKey] ?: 0L }
 
     suspend fun save(savings: Long) {
