@@ -4,7 +4,7 @@ import app.cash.turbine.test
 import com.alavpa.kakebo.data.db.DbDatasource
 import com.alavpa.kakebo.data.db.entities.LineData
 import com.alavpa.kakebo.data.mappers.LineDataMapper
-import com.alavpa.kakebo.data.preferences.KakeboDataStore
+import com.alavpa.kakebo.data.preferences.PreferencesDatasource
 import com.alavpa.kakebo.domain.models.Line
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -22,9 +22,13 @@ class KakeboDataRepositoryTest {
 
     private val dbDatasource: DbDatasource = mockk()
     private val lineDataMapper: LineDataMapper = mockk()
-    private val kakeboDataStore: KakeboDataStore = mockk()
+    private val preferencesDatasource: PreferencesDatasource = mockk()
 
-    private val repository = KakeboDataRepository(dbDatasource, lineDataMapper, kakeboDataStore)
+    private val repository = KakeboDataRepository(
+        dbDatasource,
+        lineDataMapper,
+        preferencesDatasource
+    )
 
     @Test
     fun `when insert new line should verify call insert properly`() = runTest {
@@ -56,7 +60,7 @@ class KakeboDataRepositoryTest {
 
     @Test
     fun `when get savings should verify call data store properly`() = runTest {
-        every { kakeboDataStore.savingsFlow } returns flowOf(1200)
+        every { preferencesDatasource.getSavings() } returns flowOf(1200)
 
         repository.getSavings().test {
             assertEquals(1200, awaitItem())
@@ -66,10 +70,10 @@ class KakeboDataRepositoryTest {
 
     @Test
     fun `when set savings should verify call data store properly`() = runTest {
-        coEvery { kakeboDataStore.save(1200) } just runs
+        coEvery { preferencesDatasource.setSavings(1200) } just runs
 
         repository.setSavings(1200)
 
-        coVerify { kakeboDataStore.save(1200) }
+        coVerify { preferencesDatasource.setSavings(1200) }
     }
 }
