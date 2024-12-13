@@ -24,7 +24,9 @@ class KakeboDataStore @Inject constructor(@ApplicationContext val context: Conte
         preferences[savingsKey] ?: 0L
     }
 
-    suspend fun save(savings: Long) = context.dataStore.edit { settings ->
-        settings[savingsKey] = savings
+    suspend fun save(savings: Long) {
+        context.dataStore.edit { settings ->
+            settings[savingsKey] = savings
+        }
     }
 }
