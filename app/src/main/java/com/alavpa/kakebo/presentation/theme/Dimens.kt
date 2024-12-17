@@ -20,6 +20,14 @@ object Space {
 
 object CornerRadius {
     val s = 8.dp
+    val m = 16.dp
+    val l = 24.dp
+}
+
+object BorderSize {
+    val s = 1.dp
+    val m = 2.dp
+    val l = 4.dp
 }
 
 object TextSize {

@@ -9,6 +9,7 @@ import androidx.compose.ui.unit.sp
 class KakeboTypography(
     val padText: TextStyle,
     val padButtons: TextStyle,
+    val smallText: TextStyle,
     val regularText: TextStyle,
     val titleLarge: TextStyle
 )
@@ -50,6 +51,13 @@ val kakeboTypography = KakeboTypography(
         letterSpacing = 0.5.sp
     ),
     padButtons = Typography.titleLarge,
+    smallText = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Normal,
+        fontSize = 11.sp,
+        lineHeight = 16.sp,
+        letterSpacing = 0.1.sp
+    ),
     regularText = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,

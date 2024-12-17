@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import com.alavpa.kakebo.R
+import com.alavpa.kakebo.presentation.components.BudgetBox
 import com.alavpa.kakebo.presentation.components.HorizontalSpacer
 import com.alavpa.kakebo.presentation.components.InitializeOnce
 import com.alavpa.kakebo.presentation.components.VerticalSpacer
@@ -30,17 +31,16 @@ fun StatisticsScreen(state: StatisticsState, userInteractions: StatisticsUserInt
     InitializeOnce {
         userInteractions.onInitializeOnce()
     }
-    Column(Modifier.fillMaxSize().padding(KakeboTheme.space.horizontal)) {
-        Text(stringResource(R.string.budget), style = KakeboTheme.typography.titleLarge)
-        VerticalSpacer(KakeboTheme.space.s)
-        Text(
-            text = stringResource(
-                R.string.operation,
-                state.income,
-                state.outcome,
-                state.budgetText
-            ),
-            style = KakeboTheme.typography.titleLarge
+    Column(
+        Modifier
+            .fillMaxSize()
+            .padding(KakeboTheme.space.horizontal)
+    ) {
+        BudgetBox(
+            title = stringResource(R.string.budget),
+            subtitle = stringResource(R.string.operation, state.income, state.outcome),
+            result = state.budgetText,
+            color = KakeboTheme.colorSchema.incomeColor
         )
         VerticalSpacer(KakeboTheme.space.l)
         Row(
@@ -49,7 +49,7 @@ fun StatisticsScreen(state: StatisticsState, userInteractions: StatisticsUserInt
         ) {
             Text(
                 modifier = Modifier.weight(1.0f),
-                text = stringResource(R.string.budget_with_savings),
+                text = stringResource(R.string.savings),
                 style = KakeboTheme.typography.titleLarge,
             )
             HorizontalSpacer(KakeboTheme.space.s)
@@ -62,14 +62,12 @@ fun StatisticsScreen(state: StatisticsState, userInteractions: StatisticsUserInt
             )
         }
         VerticalSpacer(KakeboTheme.space.l)
-        Text(
-            text = stringResource(
-                R.string.operation,
-                state.budgetText,
-                state.savingsText,
-                state.budgetWithSavings
-            ),
-            style = KakeboTheme.typography.titleLarge
+        BudgetBox(
+            title = stringResource(R.string.budget_with_savings),
+            subtitle = stringResource(R.string.operation, state.budgetText, state.savingsText),
+            result = state.budgetWithSavings,
+            color = KakeboTheme.colorSchema.incomeColor,
+            modifier = Modifier.align(Alignment.End)
         )
         LinesList(state.lines)
     }
@@ -80,9 +78,9 @@ private fun LinesList(lines: List<LineUI>) {
     LazyColumn(Modifier.fillMaxWidth()) {
         items(lines) { line ->
             val colorText = if (line.isIncome) {
-                KakeboTheme.colorSchema.color8
+                KakeboTheme.colorSchema.incomeColor
             } else {
-                KakeboTheme.colorSchema.color1
+                KakeboTheme.colorSchema.outcomeColor
             }
             Row(
                 Modifier
@@ -113,9 +111,9 @@ fun StatisticsPreview() {
     KakeboTheme {
         StatisticsScreen(
             state = StatisticsState.INITIAL.copy(
-                income = "100",
-                outcome = "50",
-                budgetText = "50",
+                income = "$100.00",
+                outcome = "$50.00",
+                budgetText = "$50.00",
                 budget = 0,
                 savings = "30",
                 budgetWithSavings = "20"
