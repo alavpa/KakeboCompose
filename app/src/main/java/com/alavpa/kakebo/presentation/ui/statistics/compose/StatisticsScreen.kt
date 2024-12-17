@@ -22,12 +22,15 @@ import com.alavpa.kakebo.presentation.components.HorizontalSpacer
 import com.alavpa.kakebo.presentation.components.InitializeOnce
 import com.alavpa.kakebo.presentation.components.VerticalSpacer
 import com.alavpa.kakebo.presentation.models.LineUI
+import com.alavpa.kakebo.presentation.theme.KakeboTheme
 import com.alavpa.kakebo.presentation.ui.statistics.StatisticsState
 import com.alavpa.kakebo.presentation.ui.statistics.StatisticsUserInteractions
-import com.alavpa.kakebo.presentation.theme.KakeboTheme
 
 @Composable
-fun StatisticsScreen(state: StatisticsState, userInteractions: StatisticsUserInteractions) {
+fun StatisticsScreen(
+    state: StatisticsState,
+    userInteractions: StatisticsUserInteractions
+) {
     InitializeOnce {
         userInteractions.onInitializeOnce()
     }
@@ -50,7 +53,7 @@ fun StatisticsScreen(state: StatisticsState, userInteractions: StatisticsUserInt
             Text(
                 modifier = Modifier.weight(1.0f),
                 text = stringResource(R.string.savings),
-                style = KakeboTheme.typography.titleLarge,
+                style = KakeboTheme.typography.titleLarge
             )
             HorizontalSpacer(KakeboTheme.space.s)
             OutlinedTextField(
@@ -77,11 +80,12 @@ fun StatisticsScreen(state: StatisticsState, userInteractions: StatisticsUserInt
 private fun LinesList(lines: List<LineUI>) {
     LazyColumn(Modifier.fillMaxWidth()) {
         items(lines) { line ->
-            val colorText = if (line.isIncome) {
-                KakeboTheme.colorSchema.incomeColor
-            } else {
-                KakeboTheme.colorSchema.outcomeColor
-            }
+            val colorText =
+                if (line.isIncome) {
+                    KakeboTheme.colorSchema.incomeColor
+                } else {
+                    KakeboTheme.colorSchema.outcomeColor
+                }
             Row(
                 Modifier
                     .fillMaxWidth()
@@ -110,14 +114,16 @@ private fun LinesList(lines: List<LineUI>) {
 fun StatisticsPreview() {
     KakeboTheme {
         StatisticsScreen(
-            state = StatisticsState.INITIAL.copy(
-                income = "$100.00",
-                outcome = "$50.00",
-                budgetText = "$50.00",
-                budget = 0,
-                savings = "30",
-                budgetWithSavings = "20"
-            ),
+            state =
+            StatisticsState.INITIAL
+                .copy(
+                    income = "$100.00",
+                    outcome = "$50.00",
+                    budgetText = "$50.00",
+                    budget = 0,
+                    savings = "30",
+                    budgetWithSavings = "20"
+                ),
             userInteractions = StatisticsUserInteractions.Stub()
         )
     }

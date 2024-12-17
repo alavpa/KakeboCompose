@@ -12,19 +12,21 @@ import com.alavpa.kakebo.presentation.theme.KakeboPalette.Purple80
 import com.alavpa.kakebo.presentation.theme.KakeboPalette.PurpleGrey40
 import com.alavpa.kakebo.presentation.theme.KakeboPalette.PurpleGrey80
 
-private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80,
-    background = Pink40
-)
+private val DarkColorScheme =
+    darkColorScheme(
+        primary = Purple80,
+        secondary = PurpleGrey80,
+        tertiary = Pink80,
+        background = Pink40
+    )
 
-private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40,
-    background = Pink80
-)
+private val LightColorScheme =
+    lightColorScheme(
+        primary = Purple40,
+        secondary = PurpleGrey40,
+        tertiary = Pink40,
+        background = Pink80
+    )
 
 @Composable
 fun KakeboTheme(
@@ -33,15 +35,16 @@ fun KakeboTheme(
     // dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
-    val colorScheme = when {
+    val colorScheme =
+        when {
 //        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
 //            val context = LocalContext.current
 //            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
 //        }
 
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
-    }
+            darkTheme -> DarkColorScheme
+            else -> LightColorScheme
+        }
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,
@@ -50,7 +53,6 @@ fun KakeboTheme(
 }
 
 object KakeboTheme {
-
     val colorSchema: KakeboColorSchema
         @Composable
         get() = kakeboColorSchema(isSystemInDarkTheme())

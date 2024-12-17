@@ -10,22 +10,26 @@ import com.alavpa.kakebo.presentation.models.CategoryUI.Salary
 import com.alavpa.kakebo.presentation.models.CategoryUI.Survival
 import javax.inject.Inject
 
-class CategoryUIMapper @Inject constructor() {
-    fun to(categoryUI: CategoryUI): Category = when (categoryUI) {
-        Survival -> Category.Survival
-        Leisure -> Category.Leisure
-        Culture -> Category.Culture
-        Extras -> Category.Extras
-        Salary -> Category.Salary
-        Gifts -> Category.Gifts
-    }
+class CategoryUIMapper
+@Inject
+constructor() {
+    fun to(categoryUI: CategoryUI): Category =
+        when (categoryUI) {
+            Survival -> Category.Survival
+            Leisure -> Category.Leisure
+            Culture -> Category.Culture
+            Extras -> Category.Extras
+            Salary -> Category.Salary
+            Gifts -> Category.Gifts
+        }
 
-    fun from(category: Category): CategoryUI = when (category) {
-        Category.Survival -> Survival
-        Category.Leisure -> Leisure
-        Category.Culture -> Culture
-        Category.Extras -> Extras
-        Category.Salary -> Salary
-        Category.Gifts -> Gifts
-    }
+    fun from(category: Category): CategoryUI =
+        when (category) {
+            Category.Survival -> Survival
+            Category.Leisure -> Leisure
+            Category.Culture -> Culture
+            Category.Extras -> Extras
+            Category.Salary -> Salary
+            Category.Gifts -> Gifts
+        }
 }

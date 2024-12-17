@@ -9,7 +9,6 @@ import dagger.hilt.android.components.ViewModelComponent
 @Module
 @InstallIn(ViewModelComponent::class)
 object AddLinesModule {
-
     @Provides
     fun providesInitialViewModel() = AddLinesState.INITIAL
 }

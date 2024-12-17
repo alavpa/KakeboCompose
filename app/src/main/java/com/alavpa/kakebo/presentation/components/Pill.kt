@@ -25,7 +25,8 @@ private fun Pill(
     Text(
         text = text,
         color = if (isSelected) textColorSelected else textColor,
-        modifier = Modifier
+        modifier =
+        Modifier
             .background(
                 color = if (isSelected) backgroundColorSelected else backgroundColor,
                 shape = RoundedCornerShape(KakeboTheme.cornerRadius.s)
@@ -36,7 +37,11 @@ private fun Pill(
 }
 
 @Composable
-private fun CategoryOutcomePill(text: String, isSelected: Boolean, onClick: () -> Unit) {
+private fun CategoryOutcomePill(
+    text: String,
+    isSelected: Boolean,
+    onClick: () -> Unit
+) {
     Pill(
         text = text,
         textColor = KakeboTheme.colorSchema.outcomeColor,
@@ -49,7 +54,11 @@ private fun CategoryOutcomePill(text: String, isSelected: Boolean, onClick: () -
 }
 
 @Composable
-private fun CategoryIncomePill(text: String, isSelected: Boolean, onClick: () -> Unit) {
+private fun CategoryIncomePill(
+    text: String,
+    isSelected: Boolean,
+    onClick: () -> Unit
+) {
     Pill(
         text = text,
         textColor = KakeboTheme.colorSchema.incomeColor,
@@ -62,7 +71,12 @@ private fun CategoryIncomePill(text: String, isSelected: Boolean, onClick: () ->
 }
 
 @Composable
-fun CategoryPill(text: String, isIncome: Boolean, isSelected: Boolean, onClick: () -> Unit) {
+fun CategoryPill(
+    text: String,
+    isIncome: Boolean,
+    isSelected: Boolean,
+    onClick: () -> Unit
+) {
     if (isIncome) {
         CategoryIncomePill(text, isSelected, onClick)
     } else {

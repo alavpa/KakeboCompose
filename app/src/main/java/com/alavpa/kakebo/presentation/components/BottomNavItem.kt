@@ -8,7 +8,11 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.alavpa.kakebo.R
 
-sealed class BottomNavItem(val route: String, val icon: ImageVector, @StringRes val label: Int) {
+sealed class BottomNavItem(
+    val route: String,
+    val icon: ImageVector,
+    @StringRes val label: Int
+) {
     data object Income :
         BottomNavItem("income", Icons.AutoMirrored.Filled.ArrowBack, R.string.income)
 

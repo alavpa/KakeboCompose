@@ -11,8 +11,6 @@ import dagger.hilt.components.SingletonComponent
 @Module
 @InstallIn(SingletonComponent::class)
 object PreferencesModule {
-
     @Provides
-    fun providePreferencesDatasource(dataStore: KakeboDataStore): PreferencesDatasource =
-        PreferencesDatasourceImpl(dataStore)
+    fun providePreferencesDatasource(dataStore: KakeboDataStore): PreferencesDatasource = PreferencesDatasourceImpl(dataStore)
 }

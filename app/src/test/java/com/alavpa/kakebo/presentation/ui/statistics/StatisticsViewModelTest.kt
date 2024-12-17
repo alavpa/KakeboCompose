@@ -15,14 +15,13 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
-import kotlinx.coroutines.flow.flowOf
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import kotlinx.coroutines.flow.flowOf
 
 class StatisticsViewModelTest {
-
     @get:Rule
     val coroutineRule = MainCoroutinesRule()
 
@@ -50,16 +49,17 @@ class StatisticsViewModelTest {
         every { amountUtils.fromLongToCurrency(1200) } returns "$12.00"
         every { amountUtils.fromLongToCurrency(44800) } returns "$448.00"
         every { linesUIMapper.from(any()) } returns lineMock
-        val expectedState = StatisticsState.INITIAL.copy(
-            income = "$500.00",
-            outcome = "$40.00",
-            budgetText = "$460.00",
-            budget = 46000,
-            savingsText = "$12.00",
-            savings = "12.00",
-            budgetWithSavings = "$448.00",
-            lines = listOf(lineMock, lineMock)
-        )
+        val expectedState =
+            StatisticsState.INITIAL.copy(
+                income = "$500.00",
+                outcome = "$40.00",
+                budgetText = "$460.00",
+                budget = 46000,
+                savingsText = "$12.00",
+                savings = "12.00",
+                budgetWithSavings = "$448.00",
+                lines = listOf(lineMock, lineMock)
+            )
 
         viewmodel.onInitializeOnce()
 
@@ -73,26 +73,28 @@ class StatisticsViewModelTest {
         every { amountUtils.fromLongToCurrency(4400) } returns "$44.00"
         coEvery { setSavings(5600) } just runs
         val viewmodel = provideViewModel(StatisticsState.INITIAL.copy(budget = 10000))
-        val expectedState = StatisticsState.INITIAL.copy(
-            budget = 10000,
-            savings = "56",
-            savingsText = "$56.00",
-            budgetWithSavings = "$44.00"
-        )
+        val expectedState =
+            StatisticsState.INITIAL.copy(
+                budget = 10000,
+                savings = "56",
+                savingsText = "$56.00",
+                budgetWithSavings = "$44.00"
+            )
 
         viewmodel.onSavingsChanged("56")
 
         assertEquals(expectedState, viewmodel.state.value)
     }
 
-    private fun provideViewModel(state: StatisticsState) = StatisticsViewModel(
-        getAllLines,
-        amountUtils,
-        setSavings,
-        getSavings,
-        linesUIMapper,
-        state
-    )
+    private fun provideViewModel(state: StatisticsState) =
+        StatisticsViewModel(
+            getAllLines,
+            amountUtils,
+            setSavings,
+            getSavings,
+            linesUIMapper,
+            state
+        )
 
     private fun getLines(): List<Line> {
         return listOf(
@@ -101,7 +103,10 @@ class StatisticsViewModelTest {
         )
     }
 
-    private fun getLine(amount: Long, type: Type): Line {
+    private fun getLine(
+        amount: Long,
+        type: Type
+    ): Line {
         return Line(
             amount = amount,
             description = "",

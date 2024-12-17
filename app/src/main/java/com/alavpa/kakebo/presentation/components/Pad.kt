@@ -23,13 +23,18 @@ import com.alavpa.kakebo.R
 import com.alavpa.kakebo.presentation.theme.KakeboTheme
 
 @Composable
-fun Pad(userInteractions: PadUserInteractions, isIncome: Boolean, modifier: Modifier = Modifier) {
+fun Pad(
+    userInteractions: PadUserInteractions,
+    isIncome: Boolean,
+    modifier: Modifier = Modifier
+) {
     val focusManager = LocalFocusManager.current
-    val buttonColor = if (isIncome) {
-        KakeboTheme.colorSchema.incomeColor
-    } else {
-        KakeboTheme.colorSchema.outcomeColor
-    }
+    val buttonColor =
+        if (isIncome) {
+            KakeboTheme.colorSchema.incomeColor
+        } else {
+            KakeboTheme.colorSchema.outcomeColor
+        }
     Row(modifier) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             PadKey("1", color = buttonColor, onClick = { userInteractions.onClickNumber("1") })
@@ -66,9 +71,14 @@ fun Pad(userInteractions: PadUserInteractions, isIncome: Boolean, modifier: Modi
 }
 
 @Composable
-private fun PadKey(text: String, color: Color, onClick: () -> Unit) {
+private fun PadKey(
+    text: String,
+    color: Color,
+    onClick: () -> Unit
+) {
     Button(
-        modifier = Modifier
+        modifier =
+        Modifier
             .padding(KakeboTheme.space.s)
             .size(width = 80.dp, height = 80.dp),
         colors = ButtonDefaults.buttonColors().copy(containerColor = color),
@@ -86,7 +96,8 @@ private fun PadIcon(
     onClick: () -> Unit
 ) {
     Button(
-        modifier = Modifier
+        modifier =
+        Modifier
             .padding(KakeboTheme.space.s)
             .size(width = 80.dp, height = 80.dp),
         colors = ButtonDefaults.buttonColors().copy(containerColor = color),
@@ -98,6 +109,8 @@ private fun PadIcon(
 
 interface PadUserInteractions {
     fun onClickNumber(number: String)
+
     fun onClickDelete()
+
     fun onClickOk(isIncome: Boolean)
 }

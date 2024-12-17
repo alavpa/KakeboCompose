@@ -11,6 +11,8 @@ import com.alavpa.kakebo.presentation.mappers.LineUIMapper
 import com.alavpa.kakebo.presentation.models.LineUI
 import com.alavpa.kakebo.utils.AmountUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.util.Locale
+import javax.inject.Inject
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,11 +21,11 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.flow.zip
 import kotlinx.coroutines.launch
-import java.util.Locale
-import javax.inject.Inject
 
 @HiltViewModel
-class StatisticsViewModel @Inject constructor(
+class StatisticsViewModel
+@Inject
+constructor(
     private val getLines: GetAllLines,
     private val amountUtils: AmountUtils,
     private val setSavings: SetSavings,
@@ -31,7 +33,6 @@ class StatisticsViewModel @Inject constructor(
     private val linesUIMapper: LineUIMapper,
     initialState: StatisticsState
 ) : ViewModel(), StatisticsUserInteractions {
-
     private val _state = MutableStateFlow(initialState)
     val state: StateFlow<StatisticsState>
         get() = _state
@@ -41,10 +42,12 @@ class StatisticsViewModel @Inject constructor(
             getLines().zip(getSavings()) { lines, savings ->
                 Pair(lines, savings)
             }.collect { (lines, savings) ->
-                val income = lines.filter { it.type == Type.Income }
-                    .sumOf { it.amount }
-                val outcome = lines.filter { it.type == Type.Outcome }
-                    .sumOf { it.amount }
+                val income =
+                    lines.filter { it.type == Type.Income }
+                        .sumOf { it.amount }
+                val outcome =
+                    lines.filter { it.type == Type.Outcome }
+                        .sumOf { it.amount }
                 val budget = income - outcome
                 val budgetWithSavings = budget - savings
                 _state.update { currentState ->
@@ -87,7 +90,9 @@ class StatisticsViewModel @Inject constructor(
 }
 
 @Immutable
-data class StatisticsState @Inject constructor(
+data class StatisticsState
+@Inject
+constructor(
     val income: String,
     val outcome: String,
     val budget: Long,
@@ -98,25 +103,28 @@ data class StatisticsState @Inject constructor(
     val lines: List<LineUI>
 ) {
     companion object {
-        val INITIAL = StatisticsState(
-            income = "",
-            outcome = "",
-            budget = 0,
-            budgetText = "",
-            savings = "",
-            savingsText = "",
-            budgetWithSavings = "",
-            lines = emptyList()
-        )
+        val INITIAL =
+            StatisticsState(
+                income = "",
+                outcome = "",
+                budget = 0,
+                budgetText = "",
+                savings = "",
+                savingsText = "",
+                budgetWithSavings = "",
+                lines = emptyList()
+            )
     }
 }
 
 interface StatisticsUserInteractions {
     fun onInitializeOnce()
+
     fun onSavingsChanged(value: String)
 
     class Stub : StatisticsUserInteractions {
         override fun onInitializeOnce() = Unit
+
         override fun onSavingsChanged(value: String) = Unit
     }
 }

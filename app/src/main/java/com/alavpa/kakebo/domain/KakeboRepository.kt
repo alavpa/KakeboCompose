@@ -5,7 +5,10 @@ import kotlinx.coroutines.flow.Flow
 
 interface KakeboRepository {
     suspend fun insertNewLine(line: Line)
+
     fun getAllLines(): Flow<List<Line>>
+
     suspend fun setSavings(savings: Long)
+
     fun getSavings(): Flow<Long>
 }

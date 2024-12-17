@@ -36,25 +36,28 @@ fun AddLinesScreen(
     userInteractions: AddLinesUserInteractions,
     showSnackbarMessage: suspend (String) -> Unit
 ) {
-    val color = if (isIncome) {
-        KakeboTheme.colorSchema.incomeColor
-    } else {
-        KakeboTheme.colorSchema.outcomeColor
-    }
+    val color =
+        if (isIncome) {
+            KakeboTheme.colorSchema.incomeColor
+        } else {
+            KakeboTheme.colorSchema.outcomeColor
+        }
     val verticalScrollState = rememberScrollState()
     InitializeOnce { userInteractions.onInitializeOnce(isIncome) }
-    val successMessage = if (isIncome) {
-        stringResource(R.string.income_success_message)
-    } else {
-        stringResource(R.string.outcome_success_message)
-    }
+    val successMessage =
+        if (isIncome) {
+            stringResource(R.string.income_success_message)
+        } else {
+            stringResource(R.string.outcome_success_message)
+        }
     LaunchedEffect(state.showSuccess) {
         if (state.showSuccess) {
             showSnackbarMessage(successMessage)
         }
     }
     Column(
-        modifier = Modifier
+        modifier =
+        Modifier
             .fillMaxSize()
             .padding(KakeboTheme.space.horizontal)
             .verticalScroll(verticalScrollState),
@@ -69,7 +72,8 @@ fun AddLinesScreen(
                 onCheckedChange = { isFixed ->
                     userInteractions.onIsFixedOutcomeChanged(isFixed)
                 },
-                colors = CheckboxDefaults.colors().copy(
+                colors =
+                CheckboxDefaults.colors().copy(
                     checkedBoxColor = color,
                     uncheckedBorderColor = color,
                     checkedBorderColor = color
@@ -108,7 +112,6 @@ fun AddLinesScreen(
             minLines = 3,
             maxLines = 5
         )
-
     }
 }
 
@@ -119,7 +122,7 @@ fun OutcomeScreenPreview() {
         AddLinesScreen(
             state = AddLinesState.INITIAL,
             isIncome = false,
-            userInteractions = AddLinesUserInteractions.Stub(),
+            userInteractions = AddLinesUserInteractions.Stub()
         ) {}
     }
 }

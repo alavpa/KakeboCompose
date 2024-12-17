@@ -17,15 +17,14 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import kotlinx.coroutines.flow.flowOf
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import kotlinx.coroutines.flow.flowOf
 
 class AddLinesViewModelTest {
-
     private lateinit var viewModel: AddLinesViewModel
 
     private val insertNewLine: InsertNewLine = mockk()
@@ -90,10 +89,12 @@ class AddLinesViewModelTest {
     @Test
     fun `when viewmodel click number should call format and update current text`() {
         every { amountUtils.fromTextToCurrency("4") } returns "$0.04"
-        val expectedState = AddLinesState.INITIAL.copy(
-            currentText = "4",
-            formattedText = "$0.04"
-        )
+        val expectedState =
+            AddLinesState.INITIAL
+                .copy(
+                    currentText = "4",
+                    formattedText = "$0.04"
+                )
 
         viewModel.onClickNumber("4")
 
@@ -104,10 +105,12 @@ class AddLinesViewModelTest {
     @Test
     fun `when viewmodel click number should add new number at the end of current text`() {
         every { amountUtils.fromTextToCurrency("54") } returns "$0.54"
-        val expectedState = AddLinesState.INITIAL.copy(
-            currentText = "54",
-            formattedText = "$0.54"
-        )
+        val expectedState =
+            AddLinesState.INITIAL
+                .copy(
+                    currentText = "54",
+                    formattedText = "$0.54"
+                )
         val viewModel = provideViewModel(AddLinesState.INITIAL.copy(currentText = "5"))
 
         viewModel.onClickNumber("4")
@@ -153,19 +156,21 @@ class AddLinesViewModelTest {
         every { amountUtils.reset() } returns ""
         coEvery { insertNewLine(any()) } just runs
         val isIncome = true
-        val expectedState = AddLinesState.INITIAL.copy(
-            selectedCategory = CategoryUI.Salary,
-            showSuccess = true,
-            isFixed = true
-        )
-        val expectedLine = Line(
-            amount = 1234,
-            description = "description",
-            timestamp = 1,
-            type = Type.Income,
-            category = Category.Salary,
-            isFixed = true
-        )
+        val expectedState =
+            AddLinesState.INITIAL.copy(
+                selectedCategory = CategoryUI.Salary,
+                showSuccess = true,
+                isFixed = true
+            )
+        val expectedLine =
+            Line(
+                amount = 1234,
+                description = "description",
+                timestamp = 1,
+                type = Type.Income,
+                category = Category.Salary,
+                isFixed = true
+            )
         val viewModel = provideViewModel(
             currentState = AddLinesState.INITIAL.copy(
                 currentText = "1234",
@@ -228,12 +233,13 @@ class AddLinesViewModelTest {
         assertEquals(expectedEstate, viewModel.state.value)
     }
 
-    private fun provideViewModel(currentState: AddLinesState) = AddLinesViewModel(
-        insertNewLine,
-        getCategories,
-        calendarUtils,
-        categoryUIMapper,
-        amountUtils,
-        currentState
-    )
+    private fun provideViewModel(currentState: AddLinesState) =
+        AddLinesViewModel(
+            insertNewLine,
+            getCategories,
+            calendarUtils,
+            categoryUIMapper,
+            amountUtils,
+            currentState
+        )
 }

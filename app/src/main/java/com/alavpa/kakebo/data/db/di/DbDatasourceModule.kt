@@ -10,7 +10,6 @@ import dagger.hilt.components.SingletonComponent
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class DbDatasourceModule {
-
     @Binds
     abstract fun provideDbDataSource(dbDatasourceImpl: DbDatasourceImpl): DbDatasource
 }

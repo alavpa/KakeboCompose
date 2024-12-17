@@ -14,24 +14,25 @@ import com.alavpa.kakebo.presentation.models.CategoryUI
 import com.alavpa.kakebo.utils.AmountUtils
 import com.alavpa.kakebo.utils.CalendarUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 private const val MAX_DIGITS = 8
 
 @HiltViewModel
-class AddLinesViewModel @Inject constructor(
+class AddLinesViewModel
+@Inject
+constructor(
     private val insertNewLine: InsertNewLine,
     private val getCategories: GetCategories,
     private val calendarUtils: CalendarUtils,
     private val categoryUIMapper: CategoryUIMapper,
     private val amountUtils: AmountUtils,
-    initialState: AddLinesState = AddLinesState.INITIAL,
+    initialState: AddLinesState = AddLinesState.INITIAL
 ) : ViewModel(), AddLinesUserInteractions {
-
     private val _state = MutableStateFlow(initialState)
     val state: StateFlow<AddLinesState>
         get() = _state
@@ -72,10 +73,11 @@ class AddLinesViewModel @Inject constructor(
     override fun onClickDelete() {
         _state.update { currentState ->
             if (currentState.currentText.isNotEmpty()) {
-                val currentText = currentState.currentText.substring(
-                    startIndex = 0,
-                    endIndex = currentState.currentText.lastIndex
-                )
+                val currentText =
+                    currentState.currentText.substring(
+                        startIndex = 0,
+                        endIndex = currentState.currentText.lastIndex
+                    )
                 currentState.copy(
                     currentText = currentText,
                     formattedText = amountUtils.fromTextToCurrency(currentText)
@@ -89,14 +91,15 @@ class AddLinesViewModel @Inject constructor(
     override fun onClickOk(isIncome: Boolean) {
         viewModelScope.launch {
             with(_state.value) {
-                val line = Line(
-                    amount = currentText.toLongOrNull() ?: 0,
-                    description = description,
-                    timestamp = calendarUtils.getCurrentTimestamp(),
-                    type = if (isIncome) Type.Income else Type.Outcome,
-                    category = categoryUIMapper.to(selectedCategory ?: CategoryUI.Extras),
-                    isFixed = isFixed
-                )
+                val line =
+                    Line(
+                        amount = currentText.toLongOrNull() ?: 0,
+                        description = description,
+                        timestamp = calendarUtils.getCurrentTimestamp(),
+                        type = if (isIncome) Type.Income else Type.Outcome,
+                        category = categoryUIMapper.to(selectedCategory ?: CategoryUI.Extras),
+                        isFixed = isFixed
+                    )
                 insertNewLine(line)
                 _state.update { currentState ->
                     currentState.copy(
@@ -141,32 +144,43 @@ data class AddLinesState(
     val isFixed: Boolean
 ) {
     companion object {
-        val INITIAL = AddLinesState(
-            formattedText = "",
-            currentText = "",
-            description = "",
-            categories = emptyList(),
-            selectedCategory = null,
-            showSuccess = false,
-            isFixed = false
-        )
+        val INITIAL =
+            AddLinesState(
+                formattedText = "",
+                currentText = "",
+                description = "",
+                categories = emptyList(),
+                selectedCategory = null,
+                showSuccess = false,
+                isFixed = false
+            )
     }
 }
 
 interface AddLinesUserInteractions : PadUserInteractions, SnackbarInteractions {
     fun onClickCategory(category: CategoryUI)
+
     fun onDescriptionChanged(description: String)
+
     fun onIsFixedOutcomeChanged(value: Boolean)
+
     fun onInitializeOnce(isIncome: Boolean)
 
     class Stub : AddLinesUserInteractions {
         override fun onMessageDismissed() = Unit
+
         override fun onClickNumber(number: String) = Unit
+
         override fun onClickDelete() = Unit
+
         override fun onClickOk(isIncome: Boolean) = Unit
+
         override fun onClickCategory(category: CategoryUI) = Unit
+
         override fun onDescriptionChanged(description: String) = Unit
+
         override fun onIsFixedOutcomeChanged(value: Boolean) = Unit
+
         override fun onInitializeOnce(isIncome: Boolean) = Unit
     }
 }

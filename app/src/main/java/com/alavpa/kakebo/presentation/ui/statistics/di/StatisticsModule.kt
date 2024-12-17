@@ -9,7 +9,6 @@ import dagger.hilt.android.components.ViewModelComponent
 @Module
 @InstallIn(ViewModelComponent::class)
 object StatisticsModule {
-
     @Provides
     fun providesInitialState(): StatisticsState = StatisticsState.INITIAL
 }

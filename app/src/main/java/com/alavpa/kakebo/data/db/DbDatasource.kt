@@ -3,21 +3,26 @@ package com.alavpa.kakebo.data.db
 import com.alavpa.kakebo.data.db.dao.LineDao
 import com.alavpa.kakebo.data.db.entities.LineData
 import com.alavpa.kakebo.utils.CalendarUtils
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 
 interface DbDatasource {
     suspend fun insert(lineData: LineData)
+
     fun getAll(): Flow<List<LineData>>
 }
 
-class DbDatasourceImpl @Inject constructor(
+class DbDatasourceImpl
+@Inject
+constructor(
     private val calendarUtils: CalendarUtils,
     private val lineDao: LineDao
 ) : DbDatasource {
     override suspend fun insert(lineData: LineData) = lineDao.insert(lineData)
-    override fun getAll(): Flow<List<LineData>> = lineDao.getAllFromCurrentMonthYear(
-        calendarUtils.getCurrentMonth(),
-        calendarUtils.getCurrentYear()
-    )
+
+    override fun getAll(): Flow<List<LineData>> =
+        lineDao.getAllFromCurrentMonthYear(
+            calendarUtils.getCurrentMonth(),
+            calendarUtils.getCurrentYear()
+        )
 }

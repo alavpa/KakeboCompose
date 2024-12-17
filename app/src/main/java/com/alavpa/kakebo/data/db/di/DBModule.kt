@@ -13,11 +13,12 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class DatabaseModule {
+class DBModule {
     @Provides
     @Singleton
-    fun provideDb(@ApplicationContext context: Context): KakeboDatabase =
-        Room.databaseBuilder(context, KakeboDatabase::class.java, "kakebo.db").build()
+    fun provideDb(
+        @ApplicationContext context: Context
+    ): KakeboDatabase = Room.databaseBuilder(context, KakeboDatabase::class.java, "kakebo.db").build()
 
     @Provides
     fun provideDao(db: KakeboDatabase): LineDao = db.lineDao()

@@ -9,14 +9,14 @@ import java.util.Calendar
 private const val TIMESTAMP: Long = 1734036363000
 
 class CalendarUtilsTest {
-
     private val calendarUtils: CalendarUtils = spyk()
 
     @Test
     fun `when ask for current month return current month`() {
-        every { calendarUtils.getCalendarInstance() } returns Calendar.getInstance().apply {
-            set(Calendar.MONTH, 10)
-        }
+        every { calendarUtils.getCalendarInstance() } returns
+            Calendar.getInstance().apply {
+                set(Calendar.MONTH, 10)
+            }
 
         val currentMonth = calendarUtils.getCurrentMonth()
 
@@ -25,9 +25,10 @@ class CalendarUtilsTest {
 
     @Test
     fun `when ask for current timestamp return current timestamp`() {
-        every { calendarUtils.getCalendarInstance() } returns Calendar.getInstance().apply {
-            timeInMillis = 10
-        }
+        every { calendarUtils.getCalendarInstance() } returns
+            Calendar.getInstance().apply {
+                timeInMillis = 10
+            }
 
         val currentMonth = calendarUtils.getCurrentTimestamp()
 
@@ -36,9 +37,11 @@ class CalendarUtilsTest {
 
     @Test
     fun `when ask for current year return current year`() {
-        every { calendarUtils.getCalendarInstance() } returns Calendar.getInstance().apply {
-            set(Calendar.YEAR, 1089)
-        }
+        every { calendarUtils.getCalendarInstance() } returns
+            Calendar.getInstance()
+                .apply {
+                    set(Calendar.YEAR, 1089)
+                }
 
         val currentMonth = calendarUtils.getCurrentYear()
 
