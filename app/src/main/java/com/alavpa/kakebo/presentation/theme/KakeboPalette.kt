@@ -94,7 +94,7 @@ fun darkKakeboColorSchema() =
         incomeColor = Purple80,
         color9 = PurpleGrey40,
         color10 = Pink40,
-        background = Pink40,
+        background = PurpleGrey40,
         onBackground = Neutral10
     )
 
