@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -24,9 +25,9 @@ import com.alavpa.kakebo.presentation.components.CategoryPill
 import com.alavpa.kakebo.presentation.components.InitializeOnce
 import com.alavpa.kakebo.presentation.components.Pad
 import com.alavpa.kakebo.presentation.components.VerticalSpacer
-import com.alavpa.kakebo.presentation.ui.lines.AddLinesUserInteractions
 import com.alavpa.kakebo.presentation.theme.KakeboTheme
 import com.alavpa.kakebo.presentation.ui.lines.AddLinesState
+import com.alavpa.kakebo.presentation.ui.lines.AddLinesUserInteractions
 
 @Composable
 fun AddLinesScreen(
@@ -35,6 +36,11 @@ fun AddLinesScreen(
     userInteractions: AddLinesUserInteractions,
     showSnackbarMessage: suspend (String) -> Unit
 ) {
+    val color = if (isIncome) {
+        KakeboTheme.colorSchema.incomeColor
+    } else {
+        KakeboTheme.colorSchema.outcomeColor
+    }
     val verticalScrollState = rememberScrollState()
     InitializeOnce { userInteractions.onInitializeOnce(isIncome) }
     val successMessage = if (isIncome) {
@@ -62,9 +68,17 @@ fun AddLinesScreen(
                 checked = state.isFixed,
                 onCheckedChange = { isFixed ->
                     userInteractions.onIsFixedOutcomeChanged(isFixed)
-                }
+                },
+                colors = CheckboxDefaults.colors().copy(
+                    checkedBoxColor = color,
+                    uncheckedBorderColor = color,
+                    checkedBorderColor = color
+                )
             )
-            Text(stringResource(R.string.repeat_per_month))
+            Text(
+                stringResource(R.string.repeat_per_month),
+                color = color
+            )
         }
 
         VerticalSpacer(height = KakeboTheme.space.vertical)
@@ -75,6 +89,7 @@ fun AddLinesScreen(
             items(state.categories) { category ->
                 CategoryPill(
                     text = stringResource(category.resId),
+                    isIncome = isIncome,
                     isSelected = category == state.selectedCategory
                 ) {
                     userInteractions.onClickCategory(category)
