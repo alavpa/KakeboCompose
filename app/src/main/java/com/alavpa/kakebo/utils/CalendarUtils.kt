@@ -6,9 +6,7 @@ import java.util.Calendar
 import java.util.Date
 import javax.inject.Inject
 
-class CalendarUtils
-@Inject
-constructor() {
+class CalendarUtils @Inject constructor() {
     fun getCurrentTimestamp(): Long {
         return getCalendarInstance().timeInMillis
     }
@@ -42,5 +40,6 @@ constructor() {
     fun getCalendarInstance(): Calendar = Calendar.getInstance()
 
     @VisibleForTesting
-    fun format(date: Date): String = DateFormat.getPatternInstance(DateFormat.YEAR_ABBR_MONTH).format(date)
+    fun format(date: Date): String =
+        DateFormat.getPatternInstance(DateFormat.YEAR_ABBR_MONTH).format(date)
 }

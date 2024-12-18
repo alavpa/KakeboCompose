@@ -7,9 +7,7 @@ import com.alavpa.kakebo.utils.AmountUtils
 import com.alavpa.kakebo.utils.CalendarUtils
 import javax.inject.Inject
 
-class LineUIMapper
-@Inject
-constructor(
+class LineUIMapper @Inject constructor(
     private val calendarUtils: CalendarUtils,
     private val amountUtils: AmountUtils
 ) {

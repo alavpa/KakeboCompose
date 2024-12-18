@@ -23,9 +23,7 @@ import kotlinx.coroutines.flow.zip
 import kotlinx.coroutines.launch
 
 @HiltViewModel
-class StatisticsViewModel
-@Inject
-constructor(
+class StatisticsViewModel @Inject constructor(
     private val getLines: GetAllLines,
     private val amountUtils: AmountUtils,
     private val setSavings: SetSavings,
@@ -90,9 +88,7 @@ constructor(
 }
 
 @Immutable
-data class StatisticsState
-@Inject
-constructor(
+data class StatisticsState(
     val income: String,
     val outcome: String,
     val budget: Long,

@@ -4,9 +4,7 @@ import com.alavpa.kakebo.data.model.CategoryData
 import com.alavpa.kakebo.domain.models.Category
 import javax.inject.Inject
 
-class CategoryDataMapper
-@Inject
-constructor() {
+class CategoryDataMapper @Inject constructor() {
     fun from(category: Category): CategoryData =
         when (category) {
             Category.Survival -> CategoryData.Survival

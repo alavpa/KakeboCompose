@@ -5,9 +5,7 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
-class GetCategories
-@Inject
-constructor() {
+class GetCategories @Inject constructor() {
     operator fun invoke(isIncome: Boolean): Flow<List<Category>> =
         flow {
             val categories =

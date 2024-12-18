@@ -5,9 +5,7 @@ import com.alavpa.kakebo.domain.models.Line
 import com.alavpa.kakebo.utils.CalendarUtils
 import javax.inject.Inject
 
-class LineDataMapper
-@Inject
-constructor(
+class LineDataMapper @Inject constructor(
     private val calendarUtils: CalendarUtils,
     private val categoryDataMapper: CategoryDataMapper,
     private val typeDataMapper: TypeDataMapper

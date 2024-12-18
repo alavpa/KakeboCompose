@@ -9,9 +9,7 @@ interface PreferencesDatasource {
     fun getSavings(): Flow<Long>
 }
 
-class PreferencesDatasourceImpl
-@Inject
-constructor(
+class PreferencesDatasourceImpl @Inject constructor(
     private val dataStore: KakeboDataStore
 ) : PreferencesDatasource {
     override suspend fun setSavings(savings: Long) {

@@ -16,9 +16,7 @@ private const val SAVINGS_KEY = "savings"
 private const val PREFERENCES_FILENAME = "settings"
 
 @Singleton
-class KakeboDataStore
-@Inject
-constructor(
+class KakeboDataStore @Inject constructor(
     @ApplicationContext val context: Context
 ) {
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = PREFERENCES_FILENAME)

@@ -10,9 +10,7 @@ import com.alavpa.kakebo.presentation.models.CategoryUI.Salary
 import com.alavpa.kakebo.presentation.models.CategoryUI.Survival
 import javax.inject.Inject
 
-class CategoryUIMapper
-@Inject
-constructor() {
+class CategoryUIMapper @Inject constructor() {
     fun to(categoryUI: CategoryUI): Category =
         when (categoryUI) {
             Survival -> Category.Survival

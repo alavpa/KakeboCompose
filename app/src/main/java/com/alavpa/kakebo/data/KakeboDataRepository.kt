@@ -9,9 +9,7 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class KakeboDataRepository
-@Inject
-constructor(
+class KakeboDataRepository @Inject constructor(
     private val dbDatasource: DbDatasource,
     private val lineDataMapper: LineDataMapper,
     private val preferencesDatasource: PreferencesDatasource

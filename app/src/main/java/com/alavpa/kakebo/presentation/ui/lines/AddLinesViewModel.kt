@@ -23,9 +23,7 @@ import kotlinx.coroutines.launch
 private const val MAX_DIGITS = 8
 
 @HiltViewModel
-class AddLinesViewModel
-@Inject
-constructor(
+class AddLinesViewModel @Inject constructor(
     private val insertNewLine: InsertNewLine,
     private val getCategories: GetCategories,
     private val calendarUtils: CalendarUtils,

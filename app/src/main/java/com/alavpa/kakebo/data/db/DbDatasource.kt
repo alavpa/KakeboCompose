@@ -12,9 +12,7 @@ interface DbDatasource {
     fun getAll(): Flow<List<LineData>>
 }
 
-class DbDatasourceImpl
-@Inject
-constructor(
+class DbDatasourceImpl @Inject constructor(
     private val calendarUtils: CalendarUtils,
     private val lineDao: LineDao
 ) : DbDatasource {
