@@ -10,18 +10,17 @@ class LineDataMapper @Inject constructor(
     private val categoryDataMapper: CategoryDataMapper,
     private val typeDataMapper: TypeDataMapper
 ) {
-    fun from(line: Line): LineData =
-        LineData(
-            line.id,
-            line.amount,
-            line.description,
-            line.timestamp,
-            calendarUtils.getMonth(line.timestamp),
-            calendarUtils.getYear(line.timestamp),
-            typeDataMapper.from(line.type),
-            categoryDataMapper.from(line.category),
-            line.isFixed
-        )
+    fun from(line: Line): LineData = LineData(
+        line.id,
+        line.amount,
+        line.description,
+        line.timestamp,
+        calendarUtils.getMonth(line.timestamp),
+        calendarUtils.getYear(line.timestamp),
+        typeDataMapper.from(line.type),
+        categoryDataMapper.from(line.category),
+        line.isFixed
+    )
 
     fun to(lineData: LineData): Line =
         Line(

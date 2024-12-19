@@ -8,12 +8,15 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface LineDao {
-    @Query("SELECT * FROM LineData WHERE month = :month AND year = :year ORDER BY timestamp DESC")
+    @Query(
+        "SELECT * FROM LineData WHERE (month = :month AND year = :year) OR isFixed = 1 " +
+            "ORDER BY timestamp DESC"
+    )
     fun getAllFromCurrentMonthYear(
         month: Int,
         year: Int
     ): Flow<List<LineData>>
 
     @Insert
-    suspend fun insert(line: LineData)
+    suspend fun insert(lineData: LineData)
 }
