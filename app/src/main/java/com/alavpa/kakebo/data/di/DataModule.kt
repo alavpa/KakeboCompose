@@ -1,4 +1,4 @@
-package com.alavpa.kakebo.data.db.di
+package com.alavpa.kakebo.data.di
 
 import com.alavpa.kakebo.data.KakeboDataRepository
 import com.alavpa.kakebo.data.db.DbDatasource
@@ -18,7 +18,6 @@ class DataModule {
         dbDatasource: DbDatasource,
         linearDataMapper: LineDataMapper,
         preferencesDatasource: PreferencesDatasource
-    ): KakeboRepository {
-        return KakeboDataRepository(dbDatasource, linearDataMapper, preferencesDatasource)
-    }
+    ): KakeboRepository =
+        KakeboDataRepository(dbDatasource, linearDataMapper, preferencesDatasource)
 }

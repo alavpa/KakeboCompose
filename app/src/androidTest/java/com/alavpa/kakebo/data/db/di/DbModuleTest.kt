@@ -6,19 +6,21 @@ import com.alavpa.kakebo.data.db.KakeboDatabase
 import com.alavpa.kakebo.data.db.dao.LineDao
 import dagger.Module
 import dagger.Provides
-import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import dagger.hilt.testing.TestInstallIn
 import javax.inject.Singleton
 
 @Module
-@InstallIn(SingletonComponent::class)
-class DBModule {
+@TestInstallIn(components = [SingletonComponent::class], replaces = [DbModule::class])
+class DbModuleTest {
     @Provides
     @Singleton
     fun provideDb(
         @ApplicationContext context: Context
-    ): KakeboDatabase = Room.databaseBuilder(context, KakeboDatabase::class.java, "kakebo.db").build()
+    ): KakeboDatabase {
+        return Room.inMemoryDatabaseBuilder(context, KakeboDatabase::class.java).build()
+    }
 
     @Provides
     fun provideDao(db: KakeboDatabase): LineDao = db.lineDao()
