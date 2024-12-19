@@ -29,7 +29,7 @@ class AddLinesViewModel @Inject constructor(
     private val calendarUtils: CalendarUtils,
     private val categoryUIMapper: CategoryUIMapper,
     private val amountUtils: AmountUtils,
-    initialState: AddLinesState = AddLinesState.INITIAL
+    initialState: AddLinesState
 ) : ViewModel(), AddLinesUserInteractions {
     private val _state = MutableStateFlow(initialState)
     val state: StateFlow<AddLinesState>
@@ -132,7 +132,7 @@ class AddLinesViewModel @Inject constructor(
 }
 
 @Immutable
-data class AddLinesState(
+data class AddLinesState @Inject constructor(
     val formattedText: String,
     val currentText: String,
     val description: String,

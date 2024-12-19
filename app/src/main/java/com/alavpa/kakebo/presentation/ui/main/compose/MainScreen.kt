@@ -97,7 +97,7 @@ fun OutcomeScreenContainer(
         isIncome = false,
         userInteractions = viewModel
     ) { successMessage ->
-        showSnackbarMessage(snackbarHostState, successMessage, viewModel)
+        showSnackBarMessage(snackbarHostState, successMessage, viewModel)
     }
 }
 
@@ -112,7 +112,7 @@ fun IncomeScreenContainer(
         isIncome = true,
         userInteractions = viewModel
     ) { successMessage ->
-        showSnackbarMessage(snackbarHostState, successMessage, viewModel)
+        showSnackBarMessage(snackbarHostState, successMessage, viewModel)
     }
 }
 
@@ -122,13 +122,13 @@ fun StatisticsScreenContainer(viewModel: StatisticsViewModel = hiltViewModel()) 
     StatisticsScreen(state, viewModel)
 }
 
-private suspend fun showSnackbarMessage(
-    snackbarHostState: SnackbarHostState,
+private suspend fun showSnackBarMessage(
+    snackBarHostState: SnackbarHostState,
     message: String,
-    snackbarInteractions: SnackbarInteractions
+    snackBarInteractions: SnackbarInteractions
 ) {
-    val result = snackbarHostState.showSnackbar(message = message)
+    val result = snackBarHostState.showSnackbar(message = message)
     if (result == SnackbarResult.Dismissed) {
-        snackbarInteractions.onMessageDismissed()
+        snackBarInteractions.onMessageDismissed()
     }
 }

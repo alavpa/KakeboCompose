@@ -34,7 +34,7 @@ fun AddLinesScreen(
     state: AddLinesState,
     isIncome: Boolean,
     userInteractions: AddLinesUserInteractions,
-    showSnackbarMessage: suspend (String) -> Unit
+    showSnackBarMessage: suspend (String) -> Unit
 ) {
     val color =
         if (isIncome) {
@@ -52,7 +52,7 @@ fun AddLinesScreen(
         }
     LaunchedEffect(state.showSuccess) {
         if (state.showSuccess) {
-            showSnackbarMessage(successMessage)
+            showSnackBarMessage(successMessage)
         }
     }
     Column(
