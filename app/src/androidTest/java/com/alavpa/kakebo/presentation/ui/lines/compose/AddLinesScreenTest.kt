@@ -106,6 +106,17 @@ class AddLinesScreenTest {
         assertTrue(showSnackBarMessage)
     }
 
+    @Test
+    fun whenDeleteIncomeShouldRemoveNumber() {
+        initializeTest(true) {}
+
+        AddLinesScreenTestObject.onClick1(composeRule)
+        AddLinesScreenTestObject.onClick2(composeRule)
+        AddLinesScreenTestObject.onClickDelete(composeRule)
+
+        AddLinesScreenTestObject.assertExistsText(composeRule, "$0.01")
+    }
+
     private fun initializeTest(isIncome: Boolean, showSnackBarMessage: (String) -> Unit) {
         composeRule.setContent {
             KakeboTheme {

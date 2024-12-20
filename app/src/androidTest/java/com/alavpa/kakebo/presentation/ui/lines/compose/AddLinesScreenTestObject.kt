@@ -36,6 +36,10 @@ object AddLinesScreenTestObject {
         keyPad(composeTestRule, TextUtils.getText(R.string.send)).performClick()
     }
 
+    fun onClickDelete(composeTestRule: ComposeTestRule) {
+        keyPad(composeTestRule, TextUtils.getText(R.string.delete)).performClick()
+    }
+
     fun assertExistsText(composeTestRule: ComposeTestRule, text: String) {
         composeTestRule.onNodeWithText(text).assertExists()
     }
