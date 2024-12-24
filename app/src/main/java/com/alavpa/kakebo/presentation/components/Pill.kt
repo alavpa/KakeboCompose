@@ -2,6 +2,7 @@ package com.alavpa.kakebo.presentation.components
 
 import MultiPreview
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -25,15 +26,41 @@ private fun Pill(
     Text(
         text = text,
         color = if (isSelected) textColorSelected else textColor,
-        modifier =
-        Modifier
-            .background(
-                color = if (isSelected) backgroundColorSelected else backgroundColor,
-                shape = RoundedCornerShape(KakeboTheme.cornerRadius.s)
-            )
+        modifier = getModifier(
+            backgroundColor,
+            textColor,
+            backgroundColorSelected,
+            isSelected
+        )
             .padding(KakeboTheme.space.s)
             .clickable(onClick = onClick)
     )
+}
+
+private fun getModifier(
+    backgroundColor: Color,
+    textColor: Color,
+    backgroundColorSelected: Color,
+    isSelected: Boolean = false
+): Modifier {
+    return if (isSelected) {
+        Modifier
+            .background(
+                color = backgroundColorSelected,
+                shape = RoundedCornerShape(KakeboTheme.cornerRadius.s)
+            )
+    } else {
+        Modifier
+            .background(
+                color = backgroundColor,
+                shape = RoundedCornerShape(KakeboTheme.cornerRadius.s)
+            )
+            .border(
+                width = KakeboTheme.borderSize.m,
+                color = textColor,
+                shape = RoundedCornerShape(KakeboTheme.cornerRadius.s)
+            )
+    }
 }
 
 @Composable
