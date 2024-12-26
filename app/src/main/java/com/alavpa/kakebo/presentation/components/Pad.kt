@@ -4,9 +4,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -15,8 +12,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.alavpa.kakebo.R
@@ -28,7 +25,6 @@ fun Pad(
     isIncome: Boolean,
     modifier: Modifier = Modifier
 ) {
-    val focusManager = LocalFocusManager.current
     val buttonColor =
         if (isIncome) {
             KakeboTheme.colorSchema.incomeColor
@@ -41,7 +37,7 @@ fun Pad(
             PadKey("4", color = buttonColor, onClick = { userInteractions.onClickNumber("4") })
             PadKey("7", color = buttonColor, onClick = { userInteractions.onClickNumber("7") })
             PadIcon(
-                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                painterResource(R.drawable.backspace_24px),
                 color = buttonColor,
                 contentDescription = stringResource(R.string.delete)
             ) {
@@ -58,14 +54,7 @@ fun Pad(
             PadKey("3", color = buttonColor, onClick = { userInteractions.onClickNumber("3") })
             PadKey("6", color = buttonColor, onClick = { userInteractions.onClickNumber("6") })
             PadKey("9", color = buttonColor, onClick = { userInteractions.onClickNumber("9") })
-            PadIcon(
-                imageVector = Icons.AutoMirrored.Filled.Send,
-                color = buttonColor,
-                contentDescription = stringResource(R.string.send)
-            ) {
-                focusManager.clearFocus()
-                userInteractions.onClickOk(isIncome)
-            }
+            PadKey("00", color = buttonColor, onClick = { userInteractions.onClickNumber("00") })
         }
     }
 }
@@ -90,20 +79,19 @@ private fun PadKey(
 
 @Composable
 private fun PadIcon(
-    imageVector: ImageVector,
+    painter: Painter,
     color: Color,
     contentDescription: String,
     onClick: () -> Unit
 ) {
     Button(
-        modifier =
-        Modifier
+        modifier = Modifier
             .padding(KakeboTheme.space.s)
             .size(width = 80.dp, height = 80.dp),
         colors = ButtonDefaults.buttonColors().copy(containerColor = color),
         onClick = onClick
     ) {
-        Icon(imageVector = imageVector, contentDescription = contentDescription)
+        Icon(painter = painter, contentDescription = contentDescription)
     }
 }
 

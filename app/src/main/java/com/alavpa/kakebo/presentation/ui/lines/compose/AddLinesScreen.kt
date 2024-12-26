@@ -11,17 +11,23 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import com.alavpa.kakebo.R
 import com.alavpa.kakebo.presentation.components.CategoryPill
+import com.alavpa.kakebo.presentation.components.HorizontalSpacer
 import com.alavpa.kakebo.presentation.components.InitializeOnce
 import com.alavpa.kakebo.presentation.components.Pad
 import com.alavpa.kakebo.presentation.components.VerticalSpacer
@@ -36,6 +42,7 @@ fun AddLinesScreen(
     userInteractions: AddLinesUserInteractions,
     showSnackBarMessage: suspend (String) -> Unit
 ) {
+    val focusManager = LocalFocusManager.current
     val color =
         if (isIncome) {
             KakeboTheme.colorSchema.incomeColor
@@ -56,8 +63,7 @@ fun AddLinesScreen(
         }
     }
     Column(
-        modifier =
-        Modifier
+        modifier = Modifier
             .fillMaxSize()
             .padding(KakeboTheme.space.horizontal)
             .verticalScroll(verticalScrollState),
@@ -104,14 +110,25 @@ fun AddLinesScreen(
         Text(text = state.formattedText, style = KakeboTheme.typography.padText)
         Pad(userInteractions, isIncome)
         VerticalSpacer(height = KakeboTheme.space.vertical)
-        TextField(
-            value = state.description,
-            onValueChange = { userInteractions.onDescriptionChanged(it) },
-            label = { Text(stringResource(R.string.concept)) },
-            modifier = Modifier.fillMaxWidth(),
-            minLines = 3,
-            maxLines = 5
-        )
+        Row {
+            TextField(
+                value = state.description,
+                onValueChange = { userInteractions.onDescriptionChanged(it) },
+                label = { Text(stringResource(R.string.concept)) },
+                modifier = Modifier.weight(1f, fill = true)
+            )
+            HorizontalSpacer(KakeboTheme.space.horizontal)
+            FloatingActionButton(
+                onClick = {
+                    focusManager.clearFocus()
+                    userInteractions.onClickOk(isIncome)
+                },
+                containerColor = color,
+                contentColor = KakeboTheme.colorSchema.onBackground
+            ) {
+                Icon(Icons.AutoMirrored.Filled.Send, stringResource(R.string.send))
+            }
+        }
     }
 }
 
