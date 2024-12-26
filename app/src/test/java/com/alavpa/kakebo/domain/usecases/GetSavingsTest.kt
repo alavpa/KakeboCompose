@@ -18,10 +18,10 @@ class GetSavingsTest {
     @Test
     fun `when call use case should call repository`() =
         runTest {
-            every { repository.getSavings() } returns flowOf(1200)
+            every { repository.getSavings() } returns flowOf("12.00")
 
             useCase().test {
-                assertEquals(1200, awaitItem())
+                assertEquals("12.00", awaitItem())
                 verify { repository.getSavings() }
                 awaitComplete()
             }

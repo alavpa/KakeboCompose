@@ -5,5 +5,5 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 
 class GetSavings @Inject constructor(private val repository: KakeboRepository) {
-    operator fun invoke(): Flow<Long> = repository.getSavings()
+    operator fun invoke(): Flow<String> = repository.getSavings()
 }

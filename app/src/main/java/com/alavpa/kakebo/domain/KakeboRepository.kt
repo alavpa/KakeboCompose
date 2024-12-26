@@ -8,7 +8,7 @@ interface KakeboRepository {
 
     fun getAllLines(): Flow<List<Line>>
 
-    suspend fun setSavings(savings: Long)
+    suspend fun setSavings(savings: String)
 
-    fun getSavings(): Flow<Long>
+    fun getSavings(): Flow<String>
 }

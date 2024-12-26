@@ -42,11 +42,12 @@ class StatisticsViewModelTest {
     fun `when initialize should set proper values`() {
         val lineMock: LineUI = mockk()
         every { getAllLines() } returns flowOf(getLines())
-        every { getSavings() } returns flowOf(1200)
+        every { getSavings() } returns flowOf("12.00")
         every { amountUtils.fromLongToCurrency(50000) } returns "$500.00"
         every { amountUtils.fromLongToCurrency(4000) } returns "$40.00"
         every { amountUtils.fromLongToCurrency(46000) } returns "$460.00"
         every { amountUtils.fromLongToCurrency(1200) } returns "$12.00"
+        every { amountUtils.parseAmountToLong("12.00") } returns 1200
         every { amountUtils.fromLongToCurrency(44800) } returns "$448.00"
         every { linesUIMapper.from(any()) } returns lineMock
         val expectedState =
@@ -68,18 +69,9 @@ class StatisticsViewModelTest {
 
     @Test
     fun `when savings change should update value`() {
-        every { amountUtils.parseAmountToLong("56") } returns 5600
-        every { amountUtils.fromLongToCurrency(5600) } returns "$56.00"
-        every { amountUtils.fromLongToCurrency(4400) } returns "$44.00"
-        coEvery { setSavings(5600) } just runs
-        val viewmodel = provideViewModel(StatisticsState.INITIAL.copy(budget = 10000))
-        val expectedState =
-            StatisticsState.INITIAL.copy(
-                budget = 10000,
-                savings = "56",
-                savingsText = "$56.00",
-                budgetWithSavings = "$44.00"
-            )
+        coEvery { setSavings("56") } just runs
+        val viewmodel = provideViewModel(StatisticsState.INITIAL)
+        val expectedState = StatisticsState.INITIAL.copy(savings = "56")
 
         viewmodel.onSavingsChanged("56")
 

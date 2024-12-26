@@ -24,9 +24,9 @@ class KakeboDataRepository @Inject constructor(
         }
     }
 
-    override suspend fun setSavings(savings: Long) {
+    override suspend fun setSavings(savings: String) {
         preferencesDatasource.setSavings(savings)
     }
 
-    override fun getSavings(): Flow<Long> = preferencesDatasource.getSavings()
+    override fun getSavings(): Flow<String> = preferencesDatasource.getSavings()
 }

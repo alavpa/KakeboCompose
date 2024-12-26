@@ -63,10 +63,10 @@ class KakeboDataRepositoryTest {
     @Test
     fun `when get savings should verify call data store properly`() =
         runTest {
-            every { preferencesDatasource.getSavings() } returns flowOf(1200)
+            every { preferencesDatasource.getSavings() } returns flowOf("12.10")
 
             repository.getSavings().test {
-                assertEquals(1200, awaitItem())
+                assertEquals("12.10", awaitItem())
                 awaitComplete()
             }
         }
@@ -74,10 +74,10 @@ class KakeboDataRepositoryTest {
     @Test
     fun `when set savings should verify call data store properly`() =
         runTest {
-            coEvery { preferencesDatasource.setSavings(1200) } just runs
+            coEvery { preferencesDatasource.setSavings("12.10") } just runs
 
-            repository.setSavings(1200)
+            repository.setSavings("12.10")
 
-            coVerify { preferencesDatasource.setSavings(1200) }
+            coVerify { preferencesDatasource.setSavings("12.10") }
         }
 }

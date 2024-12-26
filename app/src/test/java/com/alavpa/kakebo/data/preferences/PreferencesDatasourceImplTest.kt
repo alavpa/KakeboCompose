@@ -22,18 +22,18 @@ class PreferencesDatasourceImplTest {
         runTest {
             coEvery { dataStore.save(any()) } just runs
 
-            preferencesDatasourceImpl.setSavings(1200)
+            preferencesDatasourceImpl.setSavings("12.00")
 
-            coVerify { dataStore.save(1200) }
+            coVerify { dataStore.save("12.00") }
         }
 
     @Test
     fun `when get savings should verify flow get properly`() =
         runTest {
-            every { dataStore.savingsFlow() } returns flowOf(1200)
+            every { dataStore.savingsFlow() } returns flowOf("12.10")
 
             preferencesDatasourceImpl.getSavings().test {
-                assertEquals(1200, awaitItem())
+                assertEquals("12.10", awaitItem())
                 awaitComplete()
                 verify { dataStore.savingsFlow() }
             }
