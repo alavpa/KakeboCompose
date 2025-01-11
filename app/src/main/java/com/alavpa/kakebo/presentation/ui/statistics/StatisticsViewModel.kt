@@ -9,13 +9,14 @@ import com.alavpa.kakebo.domain.usecases.GetSavings
 import com.alavpa.kakebo.domain.usecases.SetSavings
 import com.alavpa.kakebo.presentation.mappers.LineUIMapper
 import com.alavpa.kakebo.presentation.models.LineUI
+import com.alavpa.kakebo.presentation.utils.DispatcherProvider
 import com.alavpa.kakebo.utils.AmountUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -26,40 +27,42 @@ class StatisticsViewModel @Inject constructor(
     private val setSavings: SetSavings,
     private val getSavings: GetSavings,
     private val linesUIMapper: LineUIMapper,
+    private val dispatcherProvider: DispatcherProvider,
     initialState: StatisticsState
 ) : ViewModel(), StatisticsUserInteractions {
     private val _state = MutableStateFlow(initialState)
     val state: StateFlow<StatisticsState>
         get() = _state
 
-    @OptIn(FlowPreview::class)
     override fun onInitializeOnce() {
         viewModelScope.launch {
             getLines().combine(getSavings()) { lines, savings ->
                 Pair(lines, savings)
-            }.collect { (lines, savings) ->
-                val income =
-                    lines.filter { it.type == Type.Income }
-                        .sumOf { it.amount }
-                val outcome =
-                    lines.filter { it.type == Type.Outcome }
-                        .sumOf { it.amount }
-                val budget = income - outcome
-                val longSavings = amountUtils.parseAmountToLong(savings)
-                val budgetWithSavings = budget - longSavings
-                _state.update { currentState ->
-                    currentState.copy(
-                        income = amountUtils.fromLongToCurrency(income),
-                        outcome = amountUtils.fromLongToCurrency(outcome),
-                        budget = budget,
-                        budgetText = amountUtils.fromLongToCurrency(budget),
-                        savings = savings,
-                        savingsText = amountUtils.fromLongToCurrency(longSavings),
-                        budgetWithSavings = amountUtils.fromLongToCurrency(budgetWithSavings),
-                        lines = lines.map { linesUIMapper.from(it) }
-                    )
-                }
             }
+                .flowOn(dispatcherProvider.get())
+                .collect { (lines, savings) ->
+                    val income =
+                        lines.filter { it.type == Type.Income }
+                            .sumOf { it.amount }
+                    val outcome =
+                        lines.filter { it.type == Type.Outcome }
+                            .sumOf { it.amount }
+                    val budget = income - outcome
+                    val longSavings = amountUtils.parseAmountToLong(savings)
+                    val budgetWithSavings = budget - longSavings
+                    _state.update { currentState ->
+                        currentState.copy(
+                            income = amountUtils.fromLongToCurrency(income),
+                            outcome = amountUtils.fromLongToCurrency(outcome),
+                            budget = budget,
+                            budgetText = amountUtils.fromLongToCurrency(budget),
+                            savings = savings,
+                            savingsText = amountUtils.fromLongToCurrency(longSavings),
+                            budgetWithSavings = amountUtils.fromLongToCurrency(budgetWithSavings),
+                            lines = lines.map { linesUIMapper.from(it) }
+                        )
+                    }
+                }
         }
     }
 
@@ -68,7 +71,7 @@ class StatisticsViewModel @Inject constructor(
             _state.update { currentState ->
                 currentState.copy(savings = value)
             }
-            setSavings(value)
+            setSavings(value).flowOn(dispatcherProvider.get())
         }
     }
 }

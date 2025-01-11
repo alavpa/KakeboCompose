@@ -8,14 +8,13 @@ import com.alavpa.kakebo.domain.usecases.InsertNewLine
 import com.alavpa.kakebo.presentation.mappers.CategoryUIMapper
 import com.alavpa.kakebo.presentation.models.CategoryUI
 import com.alavpa.kakebo.testutils.MainCoroutinesRule
+import com.alavpa.kakebo.testutils.TestCoroutinesProvider
 import com.alavpa.kakebo.utils.AmountUtils
 import com.alavpa.kakebo.utils.CalendarUtils
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
-import io.mockk.just
 import io.mockk.mockk
-import io.mockk.runs
 import io.mockk.verify
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -32,9 +31,10 @@ class AddLinesViewModelTest {
     private val categoryUIMapper = CategoryUIMapper()
     private val amountUtils: AmountUtils = mockk()
     private val getCategories: GetCategories = mockk()
+    private val testCoroutinesProvider = TestCoroutinesProvider()
 
     @get:Rule
-    val coroutineRule = MainCoroutinesRule()
+    val coroutineRule = MainCoroutinesRule(testCoroutinesProvider.get())
 
     @Before
     fun setUp() {
@@ -154,7 +154,7 @@ class AddLinesViewModelTest {
     fun `when click on OK and is income should send income, reset and show success message`() {
         every { calendarUtils.getCurrentTimestamp() } returns 1
         every { amountUtils.reset() } returns ""
-        coEvery { insertNewLine(any()) } just runs
+        coEvery { insertNewLine(any()) } returns flowOf(Unit)
         val isIncome = true
         val expectedState =
             AddLinesState.INITIAL.copy(
@@ -240,6 +240,7 @@ class AddLinesViewModelTest {
             calendarUtils,
             categoryUIMapper,
             amountUtils,
+            testCoroutinesProvider,
             currentState
         )
 }
