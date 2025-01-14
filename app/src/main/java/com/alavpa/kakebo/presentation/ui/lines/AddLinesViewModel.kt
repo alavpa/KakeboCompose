@@ -11,14 +11,12 @@ import com.alavpa.kakebo.presentation.components.PadUserInteractions
 import com.alavpa.kakebo.presentation.components.SnackbarInteractions
 import com.alavpa.kakebo.presentation.mappers.CategoryUIMapper
 import com.alavpa.kakebo.presentation.models.CategoryUI
-import com.alavpa.kakebo.presentation.utils.DispatcherProvider
 import com.alavpa.kakebo.utils.AmountUtils
 import com.alavpa.kakebo.utils.CalendarUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -31,7 +29,6 @@ class AddLinesViewModel @Inject constructor(
     private val calendarUtils: CalendarUtils,
     private val categoryUIMapper: CategoryUIMapper,
     private val amountUtils: AmountUtils,
-    private val dispatcherProvider: DispatcherProvider,
     initialState: AddLinesState
 ) : ViewModel(), AddLinesUserInteractions {
     private val _state = MutableStateFlow(initialState)
@@ -41,7 +38,6 @@ class AddLinesViewModel @Inject constructor(
     override fun onInitializeOnce(isIncome: Boolean) {
         viewModelScope.launch {
             getCategories(isIncome)
-                .flowOn(dispatcherProvider.get())
                 .collect { categories ->
                     _state.update { currentState ->
                         currentState.copy(
@@ -94,28 +90,25 @@ class AddLinesViewModel @Inject constructor(
     override fun onClickOk(isIncome: Boolean) {
         viewModelScope.launch {
             with(_state.value) {
-                val line =
-                    Line(
-                        amount = currentText.toLongOrNull() ?: 0,
-                        description = description,
-                        timestamp = calendarUtils.getCurrentTimestamp(),
-                        type = if (isIncome) Type.Income else Type.Outcome,
-                        category = categoryUIMapper.to(selectedCategory ?: CategoryUI.Extras),
-                        isFixed = isFixed
-                    )
+                val line = Line(
+                    amount = currentText.toLongOrNull() ?: 0,
+                    description = description,
+                    timestamp = calendarUtils.getCurrentTimestamp(),
+                    type = if (isIncome) Type.Income else Type.Outcome,
+                    category = categoryUIMapper.to(selectedCategory ?: CategoryUI.Extras),
+                    isFixed = isFixed
+                )
 
                 insertNewLine(line)
-                    .flowOn(dispatcherProvider.get())
-                    .collect {
-                        _state.update { currentState ->
-                            currentState.copy(
-                                showSuccess = true,
-                                currentText = "",
-                                formattedText = amountUtils.reset(),
-                                description = ""
-                            )
-                        }
-                    }
+
+                _state.update { currentState ->
+                    currentState.copy(
+                        showSuccess = true,
+                        currentText = "",
+                        formattedText = amountUtils.reset(),
+                        description = ""
+                    )
+                }
             }
         }
     }

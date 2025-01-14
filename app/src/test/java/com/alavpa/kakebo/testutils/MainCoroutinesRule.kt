@@ -5,11 +5,14 @@ import org.junit.runner.Description
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class MainCoroutinesRule(private val testDispatcher: CoroutineDispatcher) : TestWatcher() {
+class MainCoroutinesRule(
+    private val testDispatcher: CoroutineDispatcher = UnconfinedTestDispatcher()
+) : TestWatcher() {
     override fun starting(description: Description?) {
         super.starting(description)
         Dispatchers.setMain(testDispatcher)

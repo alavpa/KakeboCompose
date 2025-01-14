@@ -9,11 +9,12 @@ import com.alavpa.kakebo.domain.usecases.SetSavings
 import com.alavpa.kakebo.presentation.mappers.LineUIMapper
 import com.alavpa.kakebo.presentation.models.LineUI
 import com.alavpa.kakebo.testutils.MainCoroutinesRule
-import com.alavpa.kakebo.testutils.TestCoroutinesProvider
 import com.alavpa.kakebo.utils.AmountUtils
 import io.mockk.coEvery
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
+import io.mockk.runs
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -28,10 +29,9 @@ class StatisticsViewModelTest {
     private val setSavings: SetSavings = mockk()
     private val getSavings: GetSavings = mockk()
     private val linesUIMapper: LineUIMapper = mockk()
-    private val testCoroutinesProvider = TestCoroutinesProvider()
 
     @get:Rule
-    val coroutineRule = MainCoroutinesRule(testCoroutinesProvider.get())
+    val coroutineRule = MainCoroutinesRule()
 
     @Before
     fun setUp() {
@@ -69,7 +69,7 @@ class StatisticsViewModelTest {
 
     @Test
     fun `when savings change should update value`() {
-        coEvery { setSavings("56") } returns flowOf(Unit)
+        coEvery { setSavings("56") } just runs
         val viewmodel = provideViewModel(StatisticsState.INITIAL)
         val expectedState = StatisticsState.INITIAL.copy(savings = "56")
 
@@ -85,7 +85,6 @@ class StatisticsViewModelTest {
             setSavings,
             getSavings,
             linesUIMapper,
-            testCoroutinesProvider,
             state
         )
 

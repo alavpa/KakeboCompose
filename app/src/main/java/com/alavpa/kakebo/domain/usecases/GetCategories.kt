@@ -8,12 +8,11 @@ import kotlinx.coroutines.flow.flow
 class GetCategories @Inject constructor() {
     operator fun invoke(isIncome: Boolean): Flow<List<Category>> =
         flow {
-            val categories =
-                if (isIncome) {
-                    listOf(Category.Salary, Category.Gifts, Category.Extras)
-                } else {
-                    listOf(Category.Survival, Category.Leisure, Category.Culture, Category.Extras)
-                }
+            val categories = if (isIncome) {
+                listOf(Category.Salary, Category.Gifts, Category.Extras)
+            } else {
+                listOf(Category.Survival, Category.Leisure, Category.Culture, Category.Extras)
+            }
             emit(categories)
         }
 }
