@@ -34,11 +34,23 @@ fun StatisticsScreen(
     InitializeOnce {
         userInteractions.onInitializeOnce()
     }
-    Column(
+    LazyColumn(
         Modifier
             .fillMaxSize()
             .padding(KakeboTheme.space.horizontal)
     ) {
+        item {
+            Header(state, userInteractions::onSavingsChanged)
+        }
+        items(state.lines) { line ->
+            LineItem(line)
+        }
+    }
+}
+
+@Composable
+private fun Header(state: StatisticsState, onSavingsChanged: (String) -> Unit) {
+    Column {
         BudgetBox(
             title = stringResource(R.string.budget),
             subtitle = stringResource(R.string.operation, state.income, state.outcome),
@@ -59,7 +71,7 @@ fun StatisticsScreen(
             OutlinedTextField(
                 modifier = Modifier.weight(0.5f),
                 value = state.savings,
-                onValueChange = userInteractions::onSavingsChanged,
+                onValueChange = onSavingsChanged,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 textStyle = KakeboTheme.typography.titleLarge
             )
@@ -72,40 +84,34 @@ fun StatisticsScreen(
             color = KakeboTheme.colorSchema.incomeColor,
             modifier = Modifier.align(Alignment.End)
         )
-        LinesList(state.lines)
     }
 }
 
 @Composable
-private fun LinesList(lines: List<LineUI>) {
-    LazyColumn(Modifier.fillMaxWidth()) {
-        items(lines) { line ->
-            val colorText =
-                if (line.isIncome) {
-                    KakeboTheme.colorSchema.incomeColor
-                } else {
-                    KakeboTheme.colorSchema.outcomeColor
-                }
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(top = KakeboTheme.space.vertical)
-            ) {
-                Text(
-                    line.amount,
-                    Modifier
-                        .fillMaxWidth()
-                        .weight(1f),
-                    style = KakeboTheme.typography.regularText,
-                    color = colorText
-                )
-                Text(
-                    line.date,
-                    style = KakeboTheme.typography.regularText,
-                    color = colorText
-                )
-            }
-        }
+private fun LineItem(line: LineUI) {
+    val colorText = if (line.isIncome) {
+        KakeboTheme.colorSchema.incomeColor
+    } else {
+        KakeboTheme.colorSchema.outcomeColor
+    }
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .padding(top = KakeboTheme.space.vertical)
+    ) {
+        Text(
+            line.amount,
+            Modifier
+                .fillMaxWidth()
+                .weight(1f),
+            style = KakeboTheme.typography.regularText,
+            color = colorText
+        )
+        Text(
+            line.date,
+            style = KakeboTheme.typography.regularText,
+            color = colorText
+        )
     }
 }
 
