@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import com.alavpa.kakebo.R
@@ -32,34 +33,33 @@ import com.alavpa.kakebo.presentation.components.InitializeOnce
 import com.alavpa.kakebo.presentation.components.Pad
 import com.alavpa.kakebo.presentation.components.VerticalSpacer
 import com.alavpa.kakebo.presentation.theme.KakeboTheme
+import com.alavpa.kakebo.presentation.ui.lines.AddLinesEvent
 import com.alavpa.kakebo.presentation.ui.lines.AddLinesState
 import com.alavpa.kakebo.presentation.ui.lines.AddLinesUserInteractions
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.receiveAsFlow
 
 @Composable
 fun AddLinesScreen(
     state: AddLinesState,
+    event: Channel<AddLinesEvent>,
     isIncome: Boolean,
     userInteractions: AddLinesUserInteractions,
     showSnackBarMessage: suspend (String) -> Unit
 ) {
     val focusManager = LocalFocusManager.current
-    val color =
-        if (isIncome) {
-            KakeboTheme.colorSchema.incomeColor
-        } else {
-            KakeboTheme.colorSchema.outcomeColor
-        }
     val verticalScrollState = rememberScrollState()
+    val color = getColor(isIncome)
+    val successMessage = getSuccessMessage(isIncome)
+
     InitializeOnce { userInteractions.onInitializeOnce(isIncome) }
-    val successMessage =
-        if (isIncome) {
-            stringResource(R.string.income_success_message)
-        } else {
-            stringResource(R.string.outcome_success_message)
-        }
-    LaunchedEffect(state.showSuccess) {
-        if (state.showSuccess) {
-            showSnackBarMessage(successMessage)
+    LaunchedEffect(Unit) {
+        event.receiveAsFlow().collect { event ->
+            when (event) {
+                is AddLinesEvent.ShowSuccessMessage -> {
+                    showSnackBarMessage(successMessage)
+                }
+            }
         }
     }
     Column(
@@ -78,8 +78,7 @@ fun AddLinesScreen(
                 onCheckedChange = { isFixed ->
                     userInteractions.onIsFixedOutcomeChanged(isFixed)
                 },
-                colors =
-                CheckboxDefaults.colors().copy(
+                colors = CheckboxDefaults.colors().copy(
                     checkedBoxColor = color,
                     uncheckedBorderColor = color,
                     checkedBorderColor = color
@@ -132,12 +131,31 @@ fun AddLinesScreen(
     }
 }
 
+@Composable
+private fun getColor(isIncome: Boolean): Color {
+    return if (isIncome) {
+        KakeboTheme.colorSchema.incomeColor
+    } else {
+        KakeboTheme.colorSchema.outcomeColor
+    }
+}
+
+@Composable
+private fun getSuccessMessage(isIncome: Boolean): String {
+    return if (isIncome) {
+        stringResource(R.string.income_success_message)
+    } else {
+        stringResource(R.string.outcome_success_message)
+    }
+}
+
 @MultiPreview
 @Composable
 fun OutcomeScreenPreview() {
     KakeboTheme {
         AddLinesScreen(
             state = AddLinesState.INITIAL,
+            event = Channel(),
             isIncome = false,
             userInteractions = AddLinesUserInteractions.Stub()
         ) {}

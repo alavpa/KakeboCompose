@@ -6,6 +6,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import org.junit.Test
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 
 class InsertNewLineTest {
@@ -16,7 +17,7 @@ class InsertNewLineTest {
     fun `when call use case should call repository`() =
         runTest {
             val line: Line = mockk()
-            coEvery { repository.insertNewLine(line) } returns Unit
+            coEvery { repository.insertNewLine(line) } returns flowOf(Result.success(Unit))
 
             useCase(line)
 

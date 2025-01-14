@@ -3,10 +3,9 @@ package com.alavpa.kakebo.domain.usecases
 import com.alavpa.kakebo.domain.KakeboRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.just
 import io.mockk.mockk
-import io.mockk.runs
 import org.junit.Test
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 
 class SetSavingsTest {
@@ -17,7 +16,7 @@ class SetSavingsTest {
     fun `when call use case should call repository`() =
         runTest {
             val savings = "12"
-            coEvery { repository.setSavings(savings) } just runs
+            coEvery { repository.setSavings(savings) } returns flowOf(Result.success(Unit))
 
             useCase(savings)
 

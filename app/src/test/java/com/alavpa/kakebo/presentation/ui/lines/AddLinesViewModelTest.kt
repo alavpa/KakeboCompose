@@ -1,5 +1,6 @@
 package com.alavpa.kakebo.presentation.ui.lines
 
+import app.cash.turbine.test
 import com.alavpa.kakebo.domain.models.Category
 import com.alavpa.kakebo.domain.models.Line
 import com.alavpa.kakebo.domain.models.Type
@@ -13,16 +14,15 @@ import com.alavpa.kakebo.utils.CalendarUtils
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
-import io.mockk.just
 import io.mockk.mockk
-import io.mockk.runs
 import io.mockk.verify
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.test.runTest
 
 class AddLinesViewModelTest {
     private lateinit var viewModel: AddLinesViewModel
@@ -46,7 +46,7 @@ class AddLinesViewModelTest {
         val isIncome = true
         val categories = listOf(Category.Salary)
         val expectedCategories = listOf(CategoryUI.Salary)
-        every { getCategories(isIncome) } returns flowOf(categories)
+        every { getCategories(isIncome) } returns flowOf(Result.success(categories))
         every { amountUtils.reset() } returns "0.00"
 
         viewModel.onInitializeOnce(isIncome)
@@ -57,7 +57,7 @@ class AddLinesViewModelTest {
     @Test
     fun `when viewmodel initialize as outcome should call get categories`() {
         val isIncome = false
-        every { getCategories(isIncome) } returns flowOf(listOf(Category.Salary))
+        every { getCategories(isIncome) } returns flowOf(Result.success(listOf(Category.Salary)))
         every { amountUtils.reset() } returns "0.00"
 
         viewModel.onInitializeOnce(isIncome)
@@ -68,22 +68,12 @@ class AddLinesViewModelTest {
     @Test
     fun `when viewmodel initialize should reset formatted text`() {
         val isIncome = false
-        every { getCategories(isIncome) } returns flowOf(listOf(Category.Salary))
+        every { getCategories(isIncome) } returns flowOf(Result.success(listOf(Category.Salary)))
         every { amountUtils.reset() } returns "0.00€"
 
         viewModel.onInitializeOnce(isIncome)
 
         assertEquals(viewModel.state.value.formattedText, "0.00€")
-    }
-
-    @Test
-    fun `when viewmodel dismiss message should set show message as false`() {
-        val initialState = AddLinesState.INITIAL.copy(showSuccess = true)
-        val viewModel = provideViewModel(initialState)
-
-        viewModel.onMessageDismissed()
-
-        assertFalse(viewModel.state.value.showSuccess)
     }
 
     @Test
@@ -151,19 +141,17 @@ class AddLinesViewModelTest {
     }
 
     @Test
-    fun `when click on OK and is income should send income, reset and show success message`() {
-        every { calendarUtils.getCurrentTimestamp() } returns 1
-        every { amountUtils.reset() } returns ""
-        coEvery { insertNewLine(any()) } just runs
-        val isIncome = true
-        val expectedState =
-            AddLinesState.INITIAL.copy(
+    fun `when click on OK and is income should send income, reset and show success message`() =
+        runTest {
+            every { calendarUtils.getCurrentTimestamp() } returns 1
+            every { amountUtils.reset() } returns ""
+            coEvery { insertNewLine(any()) } returns flowOf(Result.success(Unit))
+            val isIncome = true
+            val expectedState = AddLinesState.INITIAL.copy(
                 selectedCategory = CategoryUI.Salary,
-                showSuccess = true,
                 isFixed = true
             )
-        val expectedLine =
-            Line(
+            val expectedLine = Line(
                 amount = 1234,
                 description = "description",
                 timestamp = 1,
@@ -171,20 +159,23 @@ class AddLinesViewModelTest {
                 category = Category.Salary,
                 isFixed = true
             )
-        val viewModel = provideViewModel(
-            currentState = AddLinesState.INITIAL.copy(
-                currentText = "1234",
-                description = "description",
-                selectedCategory = CategoryUI.Salary,
-                isFixed = true
+            val viewModel = provideViewModel(
+                currentState = AddLinesState.INITIAL.copy(
+                    currentText = "1234",
+                    description = "description",
+                    selectedCategory = CategoryUI.Salary,
+                    isFixed = true
+                )
             )
-        )
 
-        viewModel.onClickOk(isIncome)
+            viewModel.onClickOk(isIncome)
 
-        coVerify { insertNewLine(expectedLine) }
-        assertEquals(expectedState, viewModel.state.value)
-    }
+            viewModel.events.receiveAsFlow().test {
+                assertEquals(awaitItem(), AddLinesEvent.ShowSuccessMessage)
+            }
+            coVerify { insertNewLine(expectedLine) }
+            assertEquals(expectedState, viewModel.state.value)
+        }
 
     @Test
     fun `when description change should overwrite state description`() {

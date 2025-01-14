@@ -7,6 +7,8 @@ import com.alavpa.kakebo.domain.KakeboRepository
 import com.alavpa.kakebo.domain.models.Line
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 
 class KakeboDataRepository @Inject constructor(
@@ -14,19 +16,27 @@ class KakeboDataRepository @Inject constructor(
     private val lineDataMapper: LineDataMapper,
     private val preferencesDatasource: PreferencesDatasource
 ) : KakeboRepository {
-    override suspend fun insertNewLine(line: Line) {
+    override fun insertNewLine(line: Line) = flow {
         dbDatasource.insert(lineDataMapper.from(line))
+        emit(Result.success(Unit))
+    }.catch {
+        emit(Result.failure(it))
     }
 
-    override fun getAllLines(): Flow<List<Line>> {
+    override fun getAllLines(): Flow<Result<List<Line>>> {
         return dbDatasource.getAll().map { linesData ->
-            linesData.map { lineDataMapper.to(it) }
-        }
+            Result.success(linesData.map { lineDataMapper.to(it) })
+        }.catch { emit(Result.failure(it)) }
     }
 
-    override suspend fun setSavings(savings: String) {
+    override fun setSavings(savings: String): Flow<Result<Unit>> = flow {
         preferencesDatasource.setSavings(savings)
+        emit(Result.success(Unit))
+    }.catch {
+        emit(Result.failure(it))
     }
 
-    override fun getSavings(): Flow<String> = preferencesDatasource.getSavings()
+    override fun getSavings(): Flow<Result<String>> = preferencesDatasource.getSavings()
+        .map { Result.success(it) }
+        .catch { emit(Result.failure(it)) }
 }

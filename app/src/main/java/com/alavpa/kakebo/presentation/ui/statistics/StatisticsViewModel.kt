@@ -12,11 +12,17 @@ import com.alavpa.kakebo.presentation.models.LineUI
 import com.alavpa.kakebo.utils.AmountUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+
+private const val DEBOUNCE_TIMEOUT = 500L
 
 @HiltViewModel
 class StatisticsViewModel @Inject constructor(
@@ -33,41 +39,42 @@ class StatisticsViewModel @Inject constructor(
 
     override fun onInitializeOnce() {
         viewModelScope.launch {
-            getLines().combine(getSavings()) { lines, savings ->
-                Pair(lines, savings)
-            }.collect { (lines, savings) ->
-                val income =
-                    lines.filter { it.type == Type.Income }
-                        .sumOf { it.amount }
-                val outcome =
-                    lines.filter { it.type == Type.Outcome }
-                        .sumOf { it.amount }
-                val budget = income - outcome
-                val longSavings = amountUtils.parseAmountToLong(savings)
-                val budgetWithSavings = budget - longSavings
-                _state.update { currentState ->
-                    currentState.copy(
-                        income = amountUtils.fromLongToCurrency(income),
-                        outcome = amountUtils.fromLongToCurrency(outcome),
-                        budget = budget,
-                        budgetText = amountUtils.fromLongToCurrency(budget),
-                        savings = savings,
-                        savingsText = amountUtils.fromLongToCurrency(longSavings),
-                        budgetWithSavings = amountUtils.fromLongToCurrency(budgetWithSavings),
-                        lines = lines.map { linesUIMapper.from(it) }
-                    )
+            getLines().combine(getSavings()) { resultLines, resultSavings ->
+                val lines = resultLines.getOrThrow()
+                val savings = resultSavings.getOrThrow()
+                Result.success(Pair(lines, savings))
+            }.catch {
+                // Show error
+            }.collect { result ->
+                result.onSuccess { (lines, savings) ->
+                    val income = lines.filter { it.type == Type.Income }.sumOf { it.amount }
+                    val outcome = lines.filter { it.type == Type.Outcome }.sumOf { it.amount }
+                    val budget = income - outcome
+                    val longSavings = amountUtils.parseAmountToLong(savings)
+                    val budgetWithSavings = budget - longSavings
+                    _state.update { currentState ->
+                        currentState.copy(
+                            income = amountUtils.fromLongToCurrency(income),
+                            outcome = amountUtils.fromLongToCurrency(outcome),
+                            budget = budget,
+                            budgetText = amountUtils.fromLongToCurrency(budget),
+                            savings = savings,
+                            savingsText = amountUtils.fromLongToCurrency(longSavings),
+                            budgetWithSavings = amountUtils.fromLongToCurrency(budgetWithSavings),
+                            lines = lines.map { linesUIMapper.from(it) }
+                        )
+                    }
                 }
             }
         }
     }
 
+    @OptIn(FlowPreview::class)
     override fun onSavingsChanged(value: String) {
-        viewModelScope.launch {
-            _state.update { currentState ->
-                currentState.copy(savings = value)
-            }
-            setSavings(value)
+        _state.update { currentState ->
+            currentState.copy(savings = value)
         }
+        setSavings(value).debounce(DEBOUNCE_TIMEOUT).launchIn(viewModelScope)
     }
 }
 

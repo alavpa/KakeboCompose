@@ -12,9 +12,7 @@ import com.alavpa.kakebo.testutils.MainCoroutinesRule
 import com.alavpa.kakebo.utils.AmountUtils
 import io.mockk.coEvery
 import io.mockk.every
-import io.mockk.just
 import io.mockk.mockk
-import io.mockk.runs
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -41,8 +39,8 @@ class StatisticsViewModelTest {
     @Test
     fun `when initialize should set proper values`() {
         val lineMock: LineUI = mockk()
-        every { getAllLines() } returns flowOf(getLines())
-        every { getSavings() } returns flowOf("12.00")
+        every { getAllLines() } returns flowOf(Result.success(getLines()))
+        every { getSavings() } returns flowOf(Result.success("12.00"))
         every { amountUtils.fromLongToCurrency(50000) } returns "$500.00"
         every { amountUtils.fromLongToCurrency(4000) } returns "$40.00"
         every { amountUtils.fromLongToCurrency(46000) } returns "$460.00"
@@ -69,7 +67,7 @@ class StatisticsViewModelTest {
 
     @Test
     fun `when savings change should update value`() {
-        coEvery { setSavings("56") } just runs
+        coEvery { setSavings("56") } returns flowOf(Result.success(Unit))
         val viewmodel = provideViewModel(StatisticsState.INITIAL)
         val expectedState = StatisticsState.INITIAL.copy(savings = "56")
 

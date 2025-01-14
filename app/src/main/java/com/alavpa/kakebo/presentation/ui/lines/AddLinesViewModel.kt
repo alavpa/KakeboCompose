@@ -8,15 +8,17 @@ import com.alavpa.kakebo.domain.models.Type
 import com.alavpa.kakebo.domain.usecases.GetCategories
 import com.alavpa.kakebo.domain.usecases.InsertNewLine
 import com.alavpa.kakebo.presentation.components.PadUserInteractions
-import com.alavpa.kakebo.presentation.components.SnackbarInteractions
 import com.alavpa.kakebo.presentation.mappers.CategoryUIMapper
 import com.alavpa.kakebo.presentation.models.CategoryUI
 import com.alavpa.kakebo.utils.AmountUtils
 import com.alavpa.kakebo.utils.CalendarUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -35,23 +37,25 @@ class AddLinesViewModel @Inject constructor(
     val state: StateFlow<AddLinesState>
         get() = _state
 
+    val events = Channel<AddLinesEvent>()
+
     override fun onInitializeOnce(isIncome: Boolean) {
         viewModelScope.launch {
             getCategories(isIncome)
-                .collect { categories ->
-                    _state.update { currentState ->
-                        currentState.copy(
-                            formattedText = amountUtils.reset(),
-                            categories = categories.map { category -> categoryUIMapper.from(category) }
-                        )
+                .collect { result ->
+                    result.onSuccess { categories ->
+                        _state.update { currentState ->
+                            currentState.copy(
+                                formattedText = amountUtils.reset(),
+                                categories = categories.map { category ->
+                                    categoryUIMapper.from(
+                                        category
+                                    )
+                                }
+                            )
+                        }
                     }
                 }
-        }
-    }
-
-    override fun onMessageDismissed() {
-        _state.update { currentState ->
-            currentState.copy(showSuccess = false)
         }
     }
 
@@ -88,28 +92,31 @@ class AddLinesViewModel @Inject constructor(
     }
 
     override fun onClickOk(isIncome: Boolean) {
-        viewModelScope.launch {
-            with(_state.value) {
-                val line = Line(
-                    amount = currentText.toLongOrNull() ?: 0,
-                    description = description,
-                    timestamp = calendarUtils.getCurrentTimestamp(),
-                    type = if (isIncome) Type.Income else Type.Outcome,
-                    category = categoryUIMapper.to(selectedCategory ?: CategoryUI.Extras),
-                    isFixed = isFixed
-                )
 
-                insertNewLine(line)
+        with(_state.value) {
+            val line = Line(
+                amount = currentText.toLongOrNull() ?: 0,
+                description = description,
+                timestamp = calendarUtils.getCurrentTimestamp(),
+                type = if (isIncome) Type.Income else Type.Outcome,
+                category = categoryUIMapper.to(selectedCategory ?: CategoryUI.Extras),
+                isFixed = isFixed
+            )
 
-                _state.update { currentState ->
-                    currentState.copy(
-                        showSuccess = true,
-                        currentText = "",
-                        formattedText = amountUtils.reset(),
-                        description = ""
-                    )
+            insertNewLine(line)
+                .onEach { result ->
+                    result.onSuccess {
+                        _state.update { currentState ->
+                            currentState.copy(
+                                currentText = "",
+                                formattedText = amountUtils.reset(),
+                                description = ""
+                            )
+                        }
+                        events.send(AddLinesEvent.ShowSuccessMessage)
+                    }
                 }
-            }
+                .launchIn(viewModelScope)
         }
     }
 
@@ -140,7 +147,6 @@ data class AddLinesState @Inject constructor(
     val description: String,
     val categories: List<CategoryUI>,
     val selectedCategory: CategoryUI?,
-    val showSuccess: Boolean,
     val isFixed: Boolean
 ) {
     companion object {
@@ -151,13 +157,16 @@ data class AddLinesState @Inject constructor(
                 description = "",
                 categories = emptyList(),
                 selectedCategory = null,
-                showSuccess = false,
                 isFixed = false
             )
     }
 }
 
-interface AddLinesUserInteractions : PadUserInteractions, SnackbarInteractions {
+sealed class AddLinesEvent {
+    data object ShowSuccessMessage : AddLinesEvent()
+}
+
+interface AddLinesUserInteractions : PadUserInteractions {
     fun onClickCategory(category: CategoryUI)
 
     fun onDescriptionChanged(description: String)
@@ -167,7 +176,6 @@ interface AddLinesUserInteractions : PadUserInteractions, SnackbarInteractions {
     fun onInitializeOnce(isIncome: Boolean)
 
     class Stub : AddLinesUserInteractions {
-        override fun onMessageDismissed() = Unit
 
         override fun onClickNumber(number: String) = Unit
 

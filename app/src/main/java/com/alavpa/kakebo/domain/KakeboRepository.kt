@@ -4,11 +4,11 @@ import com.alavpa.kakebo.domain.models.Line
 import kotlinx.coroutines.flow.Flow
 
 interface KakeboRepository {
-    suspend fun insertNewLine(line: Line)
+    fun insertNewLine(line: Line): Flow<Result<Unit>>
 
-    fun getAllLines(): Flow<List<Line>>
+    fun getAllLines(): Flow<Result<List<Line>>>
 
-    suspend fun setSavings(savings: String)
+    fun setSavings(savings: String): Flow<Result<Unit>>
 
-    fun getSavings(): Flow<String>
+    fun getSavings(): Flow<Result<String>>
 }

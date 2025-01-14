@@ -17,24 +17,22 @@ class GetAllLinesTest {
     private val useCase = GetAllLines(repository)
 
     @Test
-    fun `when call use case should call repository`() =
-        runTest {
-            every { repository.getAllLines() } returns flowOf(emptyList())
+    fun `when call use case should call repository`() = runTest {
+        every { repository.getAllLines() } returns flowOf(Result.success(emptyList()))
 
-            useCase().test {
-                assertEquals(emptyList<Line>(), awaitItem())
-                verify { repository.getAllLines() }
-                awaitComplete()
-            }
+        useCase().test {
+            assertEquals(Result.success(emptyList<Line>()), awaitItem())
+            verify { repository.getAllLines() }
+            awaitComplete()
         }
+    }
 
     @Test
-    fun `when repository throw exception should emit exception`() =
-        runTest {
-            every { repository.getAllLines() } returns flow { throw IllegalStateException() }
+    fun `when repository throw exception should emit exception`() = runTest {
+        every { repository.getAllLines() } returns flow { throw IllegalStateException() }
 
-            useCase().test {
-                awaitError()
-            }
+        useCase().test {
+            awaitError()
         }
+    }
 }

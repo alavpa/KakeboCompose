@@ -8,7 +8,6 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -17,13 +16,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.alavpa.kakebo.presentation.components.BottomNavItem
-import com.alavpa.kakebo.presentation.components.SnackbarInteractions
 import com.alavpa.kakebo.presentation.ui.lines.AddLinesViewModel
 import com.alavpa.kakebo.presentation.ui.lines.compose.AddLinesScreen
 import com.alavpa.kakebo.presentation.ui.statistics.StatisticsViewModel
@@ -36,36 +35,7 @@ fun MainScreen() {
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        bottomBar = {
-            NavigationBar {
-                val backStackEntry by navController.currentBackStackEntryAsState()
-                val currentRoute = backStackEntry?.destination?.route
-                BottomNavItem.navItems.forEach { navigationItem ->
-                    NavigationBarItem(
-                        selected = currentRoute == navigationItem.route,
-                        label = {
-                            Text(stringResource(navigationItem.label))
-                        },
-                        icon = {
-                            Icon(
-                                navigationItem.icon,
-                                contentDescription = stringResource(navigationItem.label)
-                            )
-                        },
-                        onClick = {
-                            navController.navigate(navigationItem.route) {
-                                val destination = navController.graph.findStartDestination().id
-                                popUpTo(destination) {
-                                    saveState = true
-                                }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
-                        }
-                    )
-                }
-            }
-        },
+        bottomBar = { BottomBar(navController) },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) { paddingValues ->
         NavHost(
@@ -87,32 +57,66 @@ fun MainScreen() {
 }
 
 @Composable
-fun OutcomeScreenContainer(
-    viewModel: AddLinesViewModel = hiltViewModel(),
-    snackbarHostState: SnackbarHostState
-) {
-    val state by viewModel.state.collectAsState()
-    AddLinesScreen(
-        state = state,
-        isIncome = false,
-        userInteractions = viewModel
-    ) { successMessage ->
-        showSnackBarMessage(snackbarHostState, successMessage, viewModel)
+private fun BottomBar(navController: NavController) {
+    NavigationBar {
+        val backStackEntry by navController.currentBackStackEntryAsState()
+        val currentRoute = backStackEntry?.destination?.route
+        BottomNavItem.navItems.forEach { navigationItem ->
+            NavigationBarItem(
+                selected = currentRoute == navigationItem.route,
+                label = {
+                    Text(stringResource(navigationItem.label))
+                },
+                icon = {
+                    Icon(
+                        navigationItem.icon,
+                        contentDescription = stringResource(navigationItem.label)
+                    )
+                },
+                onClick = {
+                    navController.navigate(navigationItem.route) {
+                        val destination = navController.graph.findStartDestination().id
+                        popUpTo(destination) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                }
+            )
+        }
     }
 }
 
 @Composable
-fun IncomeScreenContainer(
+private fun OutcomeScreenContainer(
     viewModel: AddLinesViewModel = hiltViewModel(),
     snackbarHostState: SnackbarHostState
 ) {
     val state by viewModel.state.collectAsState()
     AddLinesScreen(
         state = state,
+        event = viewModel.events,
+        isIncome = false,
+        userInteractions = viewModel
+    ) { successMessage ->
+        snackbarHostState.showSnackbar(message = successMessage)
+    }
+}
+
+@Composable
+private fun IncomeScreenContainer(
+    viewModel: AddLinesViewModel = hiltViewModel(),
+    snackbarHostState: SnackbarHostState
+) {
+    val state by viewModel.state.collectAsState()
+    AddLinesScreen(
+        state = state,
+        event = viewModel.events,
         isIncome = true,
         userInteractions = viewModel
     ) { successMessage ->
-        showSnackBarMessage(snackbarHostState, successMessage, viewModel)
+        snackbarHostState.showSnackbar(message = successMessage)
     }
 }
 
@@ -120,15 +124,4 @@ fun IncomeScreenContainer(
 fun StatisticsScreenContainer(viewModel: StatisticsViewModel = hiltViewModel()) {
     val state by viewModel.state.collectAsState()
     StatisticsScreen(state, viewModel)
-}
-
-private suspend fun showSnackBarMessage(
-    snackBarHostState: SnackbarHostState,
-    message: String,
-    snackBarInteractions: SnackbarInteractions
-) {
-    val result = snackBarHostState.showSnackbar(message = message)
-    if (result == SnackbarResult.Dismissed) {
-        snackBarInteractions.onMessageDismissed()
-    }
 }
