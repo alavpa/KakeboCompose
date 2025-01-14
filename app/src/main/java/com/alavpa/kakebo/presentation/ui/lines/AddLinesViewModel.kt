@@ -46,7 +46,9 @@ class AddLinesViewModel @Inject constructor(
                     result.onSuccess { categories ->
                         _state.update { currentState ->
                             currentState.copy(
-                                formattedText = amountUtils.reset(),
+                                formattedText = amountUtils.fromTextToCurrency(
+                                    currentState.currentText
+                                ),
                                 categories = categories.map { category ->
                                     categoryUIMapper.from(
                                         category
