@@ -21,7 +21,6 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.test.runTest
 
 class AddLinesViewModelTest {
@@ -47,7 +46,7 @@ class AddLinesViewModelTest {
         val categories = listOf(Category.Salary)
         val expectedCategories = listOf(CategoryUI.Salary)
         every { getCategories(isIncome) } returns flowOf(Result.success(categories))
-        every { amountUtils.reset() } returns "0.00"
+        every { amountUtils.fromTextToCurrency(any()) } returns "0.00"
 
         viewModel.onInitializeOnce(isIncome)
 
@@ -58,7 +57,7 @@ class AddLinesViewModelTest {
     fun `when viewmodel initialize as outcome should call get categories`() {
         val isIncome = false
         every { getCategories(isIncome) } returns flowOf(Result.success(listOf(Category.Salary)))
-        every { amountUtils.reset() } returns "0.00"
+        every { amountUtils.fromTextToCurrency(any()) } returns "0.00"
 
         viewModel.onInitializeOnce(isIncome)
 
@@ -69,7 +68,7 @@ class AddLinesViewModelTest {
     fun `when viewmodel initialize should reset formatted text`() {
         val isIncome = false
         every { getCategories(isIncome) } returns flowOf(Result.success(listOf(Category.Salary)))
-        every { amountUtils.reset() } returns "0.00€"
+        every { amountUtils.fromTextToCurrency(any()) } returns "0.00€"
 
         viewModel.onInitializeOnce(isIncome)
 
@@ -170,7 +169,7 @@ class AddLinesViewModelTest {
 
             viewModel.onClickOk(isIncome)
 
-            viewModel.events.receiveAsFlow().test {
+            viewModel.eventsFlow.test {
                 assertEquals(awaitItem(), AddLinesEvent.ShowSuccessMessage)
             }
             coVerify { insertNewLine(expectedLine) }

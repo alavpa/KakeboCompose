@@ -15,10 +15,12 @@ import com.alavpa.kakebo.utils.CalendarUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -37,7 +39,9 @@ class AddLinesViewModel @Inject constructor(
     val state: StateFlow<AddLinesState>
         get() = _state
 
-    val events = Channel<AddLinesEvent>()
+    private val events = Channel<AddLinesEvent>(Channel.BUFFERED)
+    val eventsFlow: Flow<AddLinesEvent>
+        get() = events.receiveAsFlow()
 
     override fun onInitializeOnce(isIncome: Boolean) {
         viewModelScope.launch {

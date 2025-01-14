@@ -36,13 +36,14 @@ import com.alavpa.kakebo.presentation.theme.KakeboTheme
 import com.alavpa.kakebo.presentation.ui.lines.AddLinesEvent
 import com.alavpa.kakebo.presentation.ui.lines.AddLinesState
 import com.alavpa.kakebo.presentation.ui.lines.AddLinesUserInteractions
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.flow
 
 @Composable
 fun AddLinesScreen(
     state: AddLinesState,
-    event: Channel<AddLinesEvent>,
+    event: Flow<AddLinesEvent>,
     isIncome: Boolean,
     userInteractions: AddLinesUserInteractions,
     showSnackBarMessage: suspend (String) -> Unit
@@ -54,7 +55,7 @@ fun AddLinesScreen(
 
     InitializeOnce { userInteractions.onInitializeOnce(isIncome) }
     LaunchedEffect(Unit) {
-        event.receiveAsFlow().collect { event ->
+        event.collectLatest { event ->
             when (event) {
                 is AddLinesEvent.ShowSuccessMessage -> {
                     showSnackBarMessage(successMessage)
@@ -155,7 +156,7 @@ fun OutcomeScreenPreview() {
     KakeboTheme {
         AddLinesScreen(
             state = AddLinesState.INITIAL,
-            event = Channel(),
+            event = flow {},
             isIncome = false,
             userInteractions = AddLinesUserInteractions.Stub()
         ) {}

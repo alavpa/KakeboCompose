@@ -96,7 +96,7 @@ private fun OutcomeScreenContainer(
     val state by viewModel.state.collectAsState()
     AddLinesScreen(
         state = state,
-        event = viewModel.events,
+        event = viewModel.eventsFlow,
         isIncome = false,
         userInteractions = viewModel
     ) { successMessage ->
@@ -112,7 +112,7 @@ private fun IncomeScreenContainer(
     val state by viewModel.state.collectAsState()
     AddLinesScreen(
         state = state,
-        event = viewModel.events,
+        event = viewModel.eventsFlow,
         isIncome = true,
         userInteractions = viewModel
     ) { successMessage ->
