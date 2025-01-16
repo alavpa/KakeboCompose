@@ -23,6 +23,13 @@ class KakeboDataRepository @Inject constructor(
         emit(Result.failure(it))
     }
 
+    override fun removeLine(id: Long): Flow<Result<Unit>> = flow {
+        dbDatasource.removeLine(id)
+        emit(Result.success(Unit))
+    }.catch {
+        emit(Result.failure(it))
+    }
+
     override fun getAllLines(): Flow<Result<List<Line>>> {
         return dbDatasource.getAll().map { linesData ->
             Result.success(linesData.map { lineDataMapper.to(it) })

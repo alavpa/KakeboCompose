@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.alavpa.kakebo.domain.models.Type
 import com.alavpa.kakebo.domain.usecases.GetAllLines
 import com.alavpa.kakebo.domain.usecases.GetSavings
+import com.alavpa.kakebo.domain.usecases.RemoveLine
 import com.alavpa.kakebo.domain.usecases.SetSavings
 import com.alavpa.kakebo.presentation.mappers.LineUIMapper
 import com.alavpa.kakebo.presentation.models.LineUI
@@ -19,6 +20,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -30,6 +32,7 @@ class StatisticsViewModel @Inject constructor(
     private val amountUtils: AmountUtils,
     private val setSavings: SetSavings,
     private val getSavings: GetSavings,
+    private val removeLine: RemoveLine,
     private val linesUIMapper: LineUIMapper,
     initialState: StatisticsState
 ) : ViewModel(), StatisticsUserInteractions {
@@ -79,19 +82,25 @@ class StatisticsViewModel @Inject constructor(
 
     override fun onClickDeleteLine(id: Long) {
         _state.update {
-            it.copy(showDeleteDialog = true)
+            it.copy(lineToDelete = id)
         }
     }
 
     override fun onConfirmDelete() {
-        _state.update {
-            it.copy(showDeleteDialog = false)
+        _state.value.lineToDelete?.let {
+            removeLine(it)
+                .onEach {
+                    _state.update {
+                        it.copy(lineToDelete = null)
+                    }
+                }
+                .launchIn(viewModelScope)
         }
     }
 
     override fun onCancelDelete() {
         _state.update {
-            it.copy(showDeleteDialog = false)
+            it.copy(lineToDelete = null)
         }
     }
 }
@@ -106,7 +115,7 @@ data class StatisticsState(
     val savingsText: String,
     val budgetWithSavings: String,
     val lines: List<LineUI>,
-    val showDeleteDialog: Boolean
+    val lineToDelete: Long?
 ) {
     companion object {
         val INITIAL =
@@ -119,7 +128,7 @@ data class StatisticsState(
                 savingsText = "",
                 budgetWithSavings = "",
                 lines = emptyList(),
-                showDeleteDialog = false
+                lineToDelete = null
             )
     }
 }

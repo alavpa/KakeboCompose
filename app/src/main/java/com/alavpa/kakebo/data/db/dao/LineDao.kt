@@ -19,4 +19,7 @@ interface LineDao {
 
     @Insert
     suspend fun insert(lineData: LineData)
+
+    @Query("DELETE FROM LineData WHERE id = :id")
+    suspend fun remove(id: Long)
 }

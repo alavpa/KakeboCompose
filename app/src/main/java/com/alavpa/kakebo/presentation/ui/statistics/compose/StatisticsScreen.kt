@@ -41,7 +41,7 @@ fun StatisticsScreen(
     InitializeOnce {
         userInteractions.onInitializeOnce()
     }
-    if (state.showDeleteDialog) {
+    if (state.lineToDelete != null) {
         BasicAlertDialog(onDismissRequest = { userInteractions.onCancelDelete() }) {
             Surface {
                 Column(

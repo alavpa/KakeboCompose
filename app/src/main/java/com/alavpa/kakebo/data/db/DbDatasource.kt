@@ -10,6 +10,8 @@ interface DbDatasource {
 
     suspend fun insert(lineData: LineData)
 
+    suspend fun removeLine(id: Long)
+
     fun getAll(): Flow<List<LineData>>
 }
 
@@ -19,6 +21,8 @@ class DbDatasourceImpl @Inject constructor(
 ) : DbDatasource {
 
     override suspend fun insert(lineData: LineData) = lineDao.insert(lineData)
+    override suspend fun removeLine(id: Long) = lineDao.remove(id)
+
 
     override fun getAll(): Flow<List<LineData>> = lineDao.getAllFromCurrentMonthYear(
         calendarUtils.getCurrentMonth(),
