@@ -14,8 +14,9 @@ class LineUIMapper @Inject constructor(
 ) {
     fun from(line: Line): LineUI {
         return LineUI(
-            amountUtils.fromLongToCurrency(line.amount),
-            calendarUtils.getDateFormat(line.timestamp),
+            id = line.id,
+            amount = amountUtils.fromLongToCurrency(line.amount),
+            date = calendarUtils.getDateFormat(line.timestamp),
             isIncome = line.type == Type.Income,
             repeatPerMonth = line.isFixed,
             category = categoryUIMapper.from(line.category),

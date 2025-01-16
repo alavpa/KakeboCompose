@@ -28,7 +28,7 @@ import com.alavpa.kakebo.presentation.models.LineUI
 import com.alavpa.kakebo.presentation.theme.KakeboTheme
 
 @Composable
-fun KakeboItem(line: LineUI) {
+fun LineItem(line: LineUI, onClickDelete: () -> Unit) {
     val colorText = if (line.isIncome) {
         KakeboTheme.colorSchema.incomeColor
     } else {
@@ -85,7 +85,7 @@ fun KakeboItem(line: LineUI) {
                 }
                 VerticalSpacer(KakeboTheme.space.s)
                 Button(
-                    onClick = {}, Modifier.align(Alignment.End),
+                    onClick = onClickDelete, Modifier.align(Alignment.End),
                     colors = ButtonColors(
                         containerColor = colorText,
                         contentColor = KakeboTheme.colorSchema.onBackground,
@@ -107,8 +107,9 @@ fun KakeboItem(line: LineUI) {
 @Composable
 private fun KakeboIncomeItemPreview() {
     KakeboTheme {
-        KakeboItem(
+        LineItem(
             LineUI(
+                id = 1,
                 amount = "13,00 €",
                 date = "ene 2025",
                 isIncome = true,
@@ -116,7 +117,7 @@ private fun KakeboIncomeItemPreview() {
                 category = CategoryUI.Culture,
                 description = "This is description"
             )
-        )
+        ) {}
     }
 }
 
@@ -124,8 +125,9 @@ private fun KakeboIncomeItemPreview() {
 @Composable
 private fun KakeboOutcomeItemPreview() {
     KakeboTheme {
-        KakeboItem(
+        LineItem(
             LineUI(
+                id = 1,
                 amount = "13.00€",
                 date = "ene 2025",
                 isIncome = false,
@@ -133,6 +135,6 @@ private fun KakeboOutcomeItemPreview() {
                 category = CategoryUI.Culture,
                 description = ""
             )
-        )
+        ) {}
     }
 }

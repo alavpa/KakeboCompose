@@ -9,7 +9,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.BasicAlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -20,7 +24,7 @@ import com.alavpa.kakebo.R
 import com.alavpa.kakebo.presentation.components.BudgetBox
 import com.alavpa.kakebo.presentation.components.HorizontalSpacer
 import com.alavpa.kakebo.presentation.components.InitializeOnce
-import com.alavpa.kakebo.presentation.components.KakeboItem
+import com.alavpa.kakebo.presentation.components.LineItem
 import com.alavpa.kakebo.presentation.components.VerticalSpacer
 import com.alavpa.kakebo.presentation.models.CategoryUI
 import com.alavpa.kakebo.presentation.models.LineUI
@@ -28,6 +32,7 @@ import com.alavpa.kakebo.presentation.theme.KakeboTheme
 import com.alavpa.kakebo.presentation.ui.statistics.StatisticsState
 import com.alavpa.kakebo.presentation.ui.statistics.StatisticsUserInteractions
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StatisticsScreen(
     state: StatisticsState,
@@ -36,6 +41,36 @@ fun StatisticsScreen(
     InitializeOnce {
         userInteractions.onInitializeOnce()
     }
+    if (state.showDeleteDialog) {
+        BasicAlertDialog(onDismissRequest = { userInteractions.onCancelDelete() }) {
+            Surface {
+                Column(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            horizontal = KakeboTheme.space.horizontal,
+                            vertical = KakeboTheme.space.vertical
+                        )
+                ) {
+                    Text(
+                        stringResource(R.string.are_you_sure),
+                        style = KakeboTheme.typography.regularText
+                    )
+                    VerticalSpacer(KakeboTheme.space.l)
+                    Row(Modifier.align(Alignment.End)) {
+                        Button(onClick = { userInteractions.onCancelDelete() }) {
+                            Text(stringResource(R.string.cancel))
+                        }
+                        HorizontalSpacer(KakeboTheme.space.m)
+                        Button(onClick = { userInteractions.onConfirmDelete() }) {
+                            Text(stringResource(R.string.delete))
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     LazyColumn(
         Modifier
             .fillMaxSize()
@@ -44,8 +79,10 @@ fun StatisticsScreen(
         item {
             Header(state, userInteractions::onSavingsChanged)
         }
-        items(state.lines) { line ->
-            KakeboItem(line)
+        items(items = state.lines, key = { line -> line.id }) { line ->
+            LineItem(line) {
+                userInteractions.onClickDeleteLine(line.id)
+            }
         }
     }
 }
@@ -105,6 +142,7 @@ fun StatisticsPreview() {
                     budgetWithSavings = "20",
                     lines = listOf(
                         LineUI(
+                            id = 1,
                             amount = "12.00 €",
                             date = "ene 2025",
                             isIncome = true,
@@ -113,6 +151,7 @@ fun StatisticsPreview() {
                             description = "This is description"
                         ),
                         LineUI(
+                            id = 2,
                             amount = "12.00 €",
                             date = "ene 2025",
                             isIncome = false,
@@ -121,6 +160,7 @@ fun StatisticsPreview() {
                             description = "This is description"
                         ),
                         LineUI(
+                            id = 3,
                             amount = "12.00 €",
                             date = "ene 2025",
                             isIncome = false,
@@ -129,6 +169,7 @@ fun StatisticsPreview() {
                             description = "This is description"
                         ),
                         LineUI(
+                            id = 4,
                             amount = "12.00 €",
                             date = "ene 2025",
                             isIncome = true,

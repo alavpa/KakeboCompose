@@ -18,4 +18,5 @@
     <string name="savings">Savings:</string>
     <string name="budget_with_savings">Budget with savings</string>
     <string name="operation" translatable="false">%1$s - %2$s =</string>
+    <string name="are_you_sure">Are you sure do you wan to delete this line?</string>
 </resources>

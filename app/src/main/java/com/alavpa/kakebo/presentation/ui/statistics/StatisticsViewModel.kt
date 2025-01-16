@@ -76,6 +76,24 @@ class StatisticsViewModel @Inject constructor(
         }
         setSavings(value).debounce(DEBOUNCE_TIMEOUT).launchIn(viewModelScope)
     }
+
+    override fun onClickDeleteLine(id: Long) {
+        _state.update {
+            it.copy(showDeleteDialog = true)
+        }
+    }
+
+    override fun onConfirmDelete() {
+        _state.update {
+            it.copy(showDeleteDialog = false)
+        }
+    }
+
+    override fun onCancelDelete() {
+        _state.update {
+            it.copy(showDeleteDialog = false)
+        }
+    }
 }
 
 @Immutable
@@ -87,7 +105,8 @@ data class StatisticsState(
     val savings: String,
     val savingsText: String,
     val budgetWithSavings: String,
-    val lines: List<LineUI>
+    val lines: List<LineUI>,
+    val showDeleteDialog: Boolean
 ) {
     companion object {
         val INITIAL =
@@ -99,19 +118,23 @@ data class StatisticsState(
                 savings = "",
                 savingsText = "",
                 budgetWithSavings = "",
-                lines = emptyList()
+                lines = emptyList(),
+                showDeleteDialog = false
             )
     }
 }
 
 interface StatisticsUserInteractions {
     fun onInitializeOnce()
-
     fun onSavingsChanged(value: String)
-
+    fun onClickDeleteLine(id: Long)
+    fun onConfirmDelete()
+    fun onCancelDelete()
     class Stub : StatisticsUserInteractions {
         override fun onInitializeOnce() = Unit
-
         override fun onSavingsChanged(value: String) = Unit
+        override fun onClickDeleteLine(id: Long) = Unit
+        override fun onConfirmDelete() = Unit
+        override fun onCancelDelete() = Unit
     }
 }
