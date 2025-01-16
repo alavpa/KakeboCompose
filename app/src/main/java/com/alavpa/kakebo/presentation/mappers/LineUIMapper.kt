@@ -8,6 +8,7 @@ import com.alavpa.kakebo.utils.CalendarUtils
 import javax.inject.Inject
 
 class LineUIMapper @Inject constructor(
+    private val categoryUIMapper: CategoryUIMapper,
     private val calendarUtils: CalendarUtils,
     private val amountUtils: AmountUtils
 ) {
@@ -15,7 +16,10 @@ class LineUIMapper @Inject constructor(
         return LineUI(
             amountUtils.fromLongToCurrency(line.amount),
             calendarUtils.getDateFormat(line.timestamp),
-            isIncome = line.type == Type.Income
+            isIncome = line.type == Type.Income,
+            repeatPerMonth = line.isFixed,
+            category = categoryUIMapper.from(line.category),
+            description = line.description
         )
     }
 }

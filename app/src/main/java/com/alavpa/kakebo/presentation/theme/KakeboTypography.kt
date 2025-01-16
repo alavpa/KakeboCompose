@@ -17,8 +17,7 @@ class KakeboTypography(
 // Set of Material typography styles to start with
 val Typography =
     Typography(
-        bodyLarge =
-        TextStyle(
+        bodyLarge = TextStyle(
             fontFamily = FontFamily.Default,
             fontWeight = FontWeight.Normal,
             fontSize = 16.sp,
@@ -63,7 +62,7 @@ val kakeboTypography =
         regularText = TextStyle(
             fontFamily = FontFamily.Default,
             fontWeight = FontWeight.Normal,
-            fontSize = 16.sp,
+            fontSize = 14.sp,
             lineHeight = 24.sp,
             letterSpacing = 0.5.sp
         ),

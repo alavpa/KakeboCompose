@@ -98,7 +98,6 @@ class AddLinesViewModel @Inject constructor(
     }
 
     override fun onClickOk(isIncome: Boolean) {
-
         with(_state.value) {
             val line = Line(
                 amount = currentText.toLongOrNull() ?: 0,

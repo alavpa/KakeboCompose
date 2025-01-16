@@ -20,7 +20,9 @@ import com.alavpa.kakebo.R
 import com.alavpa.kakebo.presentation.components.BudgetBox
 import com.alavpa.kakebo.presentation.components.HorizontalSpacer
 import com.alavpa.kakebo.presentation.components.InitializeOnce
+import com.alavpa.kakebo.presentation.components.KakeboItem
 import com.alavpa.kakebo.presentation.components.VerticalSpacer
+import com.alavpa.kakebo.presentation.models.CategoryUI
 import com.alavpa.kakebo.presentation.models.LineUI
 import com.alavpa.kakebo.presentation.theme.KakeboTheme
 import com.alavpa.kakebo.presentation.ui.statistics.StatisticsState
@@ -43,7 +45,7 @@ fun StatisticsScreen(
             Header(state, userInteractions::onSavingsChanged)
         }
         items(state.lines) { line ->
-            LineItem(line)
+            KakeboItem(line)
         }
     }
 }
@@ -87,34 +89,6 @@ private fun Header(state: StatisticsState, onSavingsChanged: (String) -> Unit) {
     }
 }
 
-@Composable
-private fun LineItem(line: LineUI) {
-    val colorText = if (line.isIncome) {
-        KakeboTheme.colorSchema.incomeColor
-    } else {
-        KakeboTheme.colorSchema.outcomeColor
-    }
-    Row(
-        Modifier
-            .fillMaxWidth()
-            .padding(top = KakeboTheme.space.vertical)
-    ) {
-        Text(
-            line.amount,
-            Modifier
-                .fillMaxWidth()
-                .weight(1f),
-            style = KakeboTheme.typography.regularText,
-            color = colorText
-        )
-        Text(
-            line.date,
-            style = KakeboTheme.typography.regularText,
-            color = colorText
-        )
-    }
-}
-
 @MultiPreview
 @Composable
 fun StatisticsPreview() {
@@ -128,7 +102,41 @@ fun StatisticsPreview() {
                     budgetText = "$50.00",
                     budget = 0,
                     savings = "30",
-                    budgetWithSavings = "20"
+                    budgetWithSavings = "20",
+                    lines = listOf(
+                        LineUI(
+                            amount = "12.00 €",
+                            date = "ene 2025",
+                            isIncome = true,
+                            repeatPerMonth = true,
+                            category = CategoryUI.Culture,
+                            description = "This is description"
+                        ),
+                        LineUI(
+                            amount = "12.00 €",
+                            date = "ene 2025",
+                            isIncome = false,
+                            repeatPerMonth = true,
+                            category = CategoryUI.Culture,
+                            description = "This is description"
+                        ),
+                        LineUI(
+                            amount = "12.00 €",
+                            date = "ene 2025",
+                            isIncome = false,
+                            repeatPerMonth = false,
+                            category = CategoryUI.Culture,
+                            description = "This is description"
+                        ),
+                        LineUI(
+                            amount = "12.00 €",
+                            date = "ene 2025",
+                            isIncome = true,
+                            repeatPerMonth = true,
+                            category = CategoryUI.Culture,
+                            description = ""
+                        )
+                    )
                 ),
             userInteractions = StatisticsUserInteractions.Stub()
         )

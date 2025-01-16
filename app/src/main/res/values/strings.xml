@@ -7,6 +7,7 @@
     <string name="outcome_success_message">Your outcome was inserted successfully!</string>
     <string name="income_success_message">Your income was inserted successfully!</string>
     <string name="repeat_per_month">Repeat per month.</string>
+    <string name="per_month">per month.</string>
     <string name="survival">Survival</string>
     <string name="leisure">Leisure</string>
     <string name="culture">Culture</string>
