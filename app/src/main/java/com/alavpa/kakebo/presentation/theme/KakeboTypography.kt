@@ -11,6 +11,7 @@ class KakeboTypography(
     val padButtons: TextStyle,
     val smallText: TextStyle,
     val regularText: TextStyle,
+    val regularBoldText: TextStyle,
     val titleLarge: TextStyle
 )
 
@@ -62,6 +63,13 @@ val kakeboTypography =
         regularText = TextStyle(
             fontFamily = FontFamily.Default,
             fontWeight = FontWeight.Normal,
+            fontSize = 14.sp,
+            lineHeight = 24.sp,
+            letterSpacing = 0.5.sp
+        ),
+        regularBoldText = TextStyle(
+            fontFamily = FontFamily.Default,
+            fontWeight = FontWeight.Bold,
             fontSize = 14.sp,
             lineHeight = 24.sp,
             letterSpacing = 0.5.sp

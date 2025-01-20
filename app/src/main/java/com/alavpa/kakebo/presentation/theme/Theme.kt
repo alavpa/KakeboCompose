@@ -1,7 +1,9 @@
 package com.alavpa.kakebo.presentation.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
@@ -31,31 +33,31 @@ private val LightColorScheme =
 @Composable
 fun KakeboTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    // dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
-    val colorScheme =
-        when {
-//        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-//            val context = LocalContext.current
-//            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-//        }
-
-            darkTheme -> DarkColorScheme
-            else -> LightColorScheme
-        }
     MaterialTheme(
-        colorScheme = colorScheme,
+        colorScheme = getColorSchema(darkTheme),
         typography = Typography,
-        content = content
+        content = { Surface { content() } }
     )
+}
+
+@Composable
+private fun getColorSchema(darkTheme: Boolean = isSystemInDarkTheme()): ColorScheme {
+    return when {
+        darkTheme -> DarkColorScheme
+        else -> LightColorScheme
+    }
 }
 
 object KakeboTheme {
     val colorSchema: KakeboColorSchema
         @Composable
         get() = kakeboColorSchema(isSystemInDarkTheme())
+
+    val materialColorScheme: ColorScheme
+        @Composable
+        get() = getColorSchema(isSystemInDarkTheme())
 
     val space = Space
 

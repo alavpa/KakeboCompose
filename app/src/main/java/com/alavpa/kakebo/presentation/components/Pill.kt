@@ -111,6 +111,23 @@ fun CategoryPill(
     }
 }
 
+@Composable
+fun Pill(
+    text: String,
+    isSelected: Boolean,
+    onClick: () -> Unit
+) {
+    Pill(
+        text = text,
+        textColor = KakeboTheme.materialColorScheme.onSurface,
+        backgroundColor = KakeboTheme.materialColorScheme.surface,
+        textColorSelected = KakeboTheme.materialColorScheme.surface,
+        backgroundColorSelected = KakeboTheme.materialColorScheme.primary,
+        isSelected = isSelected,
+        onClick = onClick
+    )
+}
+
 @MultiPreview
 @Composable
 private fun IncomePillSelectedPreview() {
@@ -128,6 +145,12 @@ private fun IncomePillSelectedPreview() {
                 isIncome = true,
                 isSelected = false,
                 onClick = {}
+            )
+            VerticalSpacer(KakeboTheme.space.l)
+            Pill(
+                "Hola Mundi",
+                isSelected = true,
+                {}
             )
         }
     }
@@ -150,6 +173,12 @@ private fun OutcomePillSelectedPreview() {
                 isIncome = false,
                 isSelected = false,
                 onClick = {}
+            )
+            VerticalSpacer(KakeboTheme.space.l)
+            Pill(
+                "Hola Mundi",
+                isSelected = false,
+                {}
             )
         }
     }

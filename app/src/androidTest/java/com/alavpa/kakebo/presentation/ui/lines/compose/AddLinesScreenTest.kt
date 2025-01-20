@@ -22,6 +22,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import javax.inject.Inject
+import kotlinx.coroutines.flow.flow
 
 @HiltAndroidTest
 @RunWith(AndroidJUnit4::class)
@@ -122,6 +123,7 @@ class AddLinesScreenTest {
             KakeboTheme {
                 AddLinesScreen(
                     viewModel.state.collectAsState().value,
+                    flow { },
                     isIncome,
                     viewModel,
                     showSnackBarMessage

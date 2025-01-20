@@ -10,9 +10,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -84,18 +81,17 @@ fun LineItem(line: LineUI, onClickDelete: () -> Unit) {
                     )
                 }
                 VerticalSpacer(KakeboTheme.space.s)
-                Button(
-                    onClick = onClickDelete, Modifier.align(Alignment.End),
-                    colors = ButtonColors(
-                        containerColor = colorText,
-                        contentColor = KakeboTheme.colorSchema.onBackground,
-                        disabledContentColor = ButtonDefaults.buttonColors().disabledContentColor,
-                        disabledContainerColor = ButtonDefaults.buttonColors().disabledContainerColor
+                if (line.isIncome) {
+                    IncomeButton(
+                        text = stringResource(R.string.delete),
+                        modifier = Modifier.align(Alignment.End),
+                        onClick = onClickDelete
                     )
-                ) {
-                    Text(
-                        stringResource(R.string.delete),
-                        style = KakeboTheme.typography.regularText
+                } else {
+                    OutcomeButton(
+                        text = stringResource(R.string.delete),
+                        modifier = Modifier.align(Alignment.End),
+                        onClick = onClickDelete
                     )
                 }
             }

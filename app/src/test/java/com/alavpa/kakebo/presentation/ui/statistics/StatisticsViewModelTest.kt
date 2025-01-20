@@ -5,6 +5,7 @@ import com.alavpa.kakebo.domain.models.Line
 import com.alavpa.kakebo.domain.models.Type
 import com.alavpa.kakebo.domain.usecases.GetAllLines
 import com.alavpa.kakebo.domain.usecases.GetSavings
+import com.alavpa.kakebo.domain.usecases.RemoveLine
 import com.alavpa.kakebo.domain.usecases.SetSavings
 import com.alavpa.kakebo.presentation.mappers.LineUIMapper
 import com.alavpa.kakebo.presentation.models.LineUI
@@ -26,6 +27,7 @@ class StatisticsViewModelTest {
     private val amountUtils: AmountUtils = mockk()
     private val setSavings: SetSavings = mockk()
     private val getSavings: GetSavings = mockk()
+    private val removeLine: RemoveLine = mockk()
     private val linesUIMapper: LineUIMapper = mockk()
 
     @get:Rule
@@ -82,6 +84,7 @@ class StatisticsViewModelTest {
             amountUtils,
             setSavings,
             getSavings,
+            removeLine,
             linesUIMapper,
             state
         )

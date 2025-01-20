@@ -80,18 +80,18 @@ class StatisticsViewModel @Inject constructor(
         setSavings(value).debounce(DEBOUNCE_TIMEOUT).launchIn(viewModelScope)
     }
 
-    override fun onClickDeleteLine(id: Long) {
+    override fun onClickDeleteLine(id: Long, isIncome: Boolean) {
         _state.update {
-            it.copy(lineToDelete = id)
+            it.copy(showDialogParams = ShowDialogParams(lineToDelete = id, isIncome = isIncome))
         }
     }
 
     override fun onConfirmDelete() {
-        _state.value.lineToDelete?.let {
-            removeLine(it)
+        _state.value.showDialogParams?.let {
+            removeLine(it.lineToDelete)
                 .onEach {
                     _state.update {
-                        it.copy(lineToDelete = null)
+                        it.copy(showDialogParams = null)
                     }
                 }
                 .launchIn(viewModelScope)
@@ -100,7 +100,7 @@ class StatisticsViewModel @Inject constructor(
 
     override fun onCancelDelete() {
         _state.update {
-            it.copy(lineToDelete = null)
+            it.copy(showDialogParams = null)
         }
     }
 }
@@ -115,7 +115,7 @@ data class StatisticsState(
     val savingsText: String,
     val budgetWithSavings: String,
     val lines: List<LineUI>,
-    val lineToDelete: Long?
+    val showDialogParams: ShowDialogParams?
 ) {
     companion object {
         val INITIAL =
@@ -128,21 +128,26 @@ data class StatisticsState(
                 savingsText = "",
                 budgetWithSavings = "",
                 lines = emptyList(),
-                lineToDelete = null
+                showDialogParams = null
             )
     }
 }
 
+data class ShowDialogParams(
+    val lineToDelete: Long,
+    val isIncome: Boolean
+)
+
 interface StatisticsUserInteractions {
     fun onInitializeOnce()
     fun onSavingsChanged(value: String)
-    fun onClickDeleteLine(id: Long)
+    fun onClickDeleteLine(id: Long, isIncome: Boolean)
     fun onConfirmDelete()
     fun onCancelDelete()
     class Stub : StatisticsUserInteractions {
         override fun onInitializeOnce() = Unit
         override fun onSavingsChanged(value: String) = Unit
-        override fun onClickDeleteLine(id: Long) = Unit
+        override fun onClickDeleteLine(id: Long, isIncome: Boolean) = Unit
         override fun onConfirmDelete() = Unit
         override fun onCancelDelete() = Unit
     }

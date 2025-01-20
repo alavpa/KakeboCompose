@@ -66,37 +66,35 @@ data class KakeboColorSchema(
     val onBackground: Color
 )
 
-fun lightKakeboColorSchema() =
-    KakeboColorSchema(
-        outcomeColor = DeepRed,
-        color2 = LightOrange,
-        color3 = PaleYellow,
-        color4 = Peach,
-        color5 = LightCoral,
-        color6 = GoldenSand,
-        color7 = RoseRed,
-        incomeColor = Purple40,
-        color9 = PurpleGrey80,
-        color10 = Pink80,
-        background = Pink80,
-        onBackground = Neutral90
-    )
+fun lightKakeboColorSchema() = KakeboColorSchema(
+    outcomeColor = DeepRed,
+    color2 = LightOrange,
+    color3 = PaleYellow,
+    color4 = Peach,
+    color5 = LightCoral,
+    color6 = GoldenSand,
+    color7 = RoseRed,
+    incomeColor = Purple40,
+    color9 = PurpleGrey80,
+    color10 = Pink80,
+    background = Pink80,
+    onBackground = Neutral90
+)
 
-fun darkKakeboColorSchema() =
-    KakeboColorSchema(
-        outcomeColor = SoftRed,
-        color2 = BurntOrange,
-        color3 = MustardYellow,
-        color4 = Terracotta,
-        color5 = Coral,
-        color6 = DarkGold,
-        color7 = BrickRed,
-        incomeColor = Purple80,
-        color9 = PurpleGrey40,
-        color10 = Pink40,
-        background = PurpleGrey40,
-        onBackground = Neutral10
-    )
+fun darkKakeboColorSchema() = KakeboColorSchema(
+    outcomeColor = SoftRed,
+    color2 = BurntOrange,
+    color3 = MustardYellow,
+    color4 = Terracotta,
+    color5 = Coral,
+    color6 = DarkGold,
+    color7 = BrickRed,
+    incomeColor = Purple80,
+    color9 = PurpleGrey40,
+    color10 = Pink40,
+    background = PurpleGrey40,
+    onBackground = Neutral10
+)
 
 fun kakeboColorSchema(isDarkMode: Boolean): KakeboColorSchema {
     return if (isDarkMode) darkKakeboColorSchema() else lightKakeboColorSchema()

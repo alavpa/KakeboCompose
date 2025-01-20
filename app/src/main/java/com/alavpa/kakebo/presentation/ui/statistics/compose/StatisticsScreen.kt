@@ -10,7 +10,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.BasicAlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -22,6 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import com.alavpa.kakebo.R
 import com.alavpa.kakebo.presentation.components.BudgetBox
+import com.alavpa.kakebo.presentation.components.DynamicButton
 import com.alavpa.kakebo.presentation.components.HorizontalSpacer
 import com.alavpa.kakebo.presentation.components.InitializeOnce
 import com.alavpa.kakebo.presentation.components.LineItem
@@ -41,7 +41,7 @@ fun StatisticsScreen(
     InitializeOnce {
         userInteractions.onInitializeOnce()
     }
-    if (state.lineToDelete != null) {
+    if (state.showDialogParams != null) {
         BasicAlertDialog(onDismissRequest = { userInteractions.onCancelDelete() }) {
             Surface {
                 Column(
@@ -58,13 +58,17 @@ fun StatisticsScreen(
                     )
                     VerticalSpacer(KakeboTheme.space.l)
                     Row(Modifier.align(Alignment.End)) {
-                        Button(onClick = { userInteractions.onCancelDelete() }) {
-                            Text(stringResource(R.string.cancel))
-                        }
+                        DynamicButton(
+                            text = stringResource(R.string.cancel),
+                            onClick = userInteractions::onCancelDelete,
+                            isIncome = state.showDialogParams.isIncome
+                        )
                         HorizontalSpacer(KakeboTheme.space.m)
-                        Button(onClick = { userInteractions.onConfirmDelete() }) {
-                            Text(stringResource(R.string.delete))
-                        }
+                        DynamicButton(
+                            text = stringResource(R.string.delete),
+                            onClick = userInteractions::onConfirmDelete,
+                            isIncome = state.showDialogParams.isIncome
+                        )
                     }
                 }
             }
@@ -81,7 +85,7 @@ fun StatisticsScreen(
         }
         items(items = state.lines, key = { line -> line.id }) { line ->
             LineItem(line) {
-                userInteractions.onClickDeleteLine(line.id)
+                userInteractions.onClickDeleteLine(line.id, line.isIncome)
             }
         }
     }
