@@ -19,7 +19,7 @@ private val DarkColorScheme =
         primary = Purple80,
         secondary = PurpleGrey80,
         tertiary = Pink80,
-        background = PurpleGrey40
+ //       background = PurpleGrey40
     )
 
 private val LightColorScheme =
@@ -27,7 +27,7 @@ private val LightColorScheme =
         primary = Purple40,
         secondary = PurpleGrey40,
         tertiary = Pink40,
-        background = Pink80
+  //      background = Pink80
     )
 
 @Composable

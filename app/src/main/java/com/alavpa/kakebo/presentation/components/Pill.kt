@@ -16,7 +16,6 @@ import com.alavpa.kakebo.presentation.theme.KakeboTheme
 @Composable
 private fun Pill(
     text: String,
-    textColor: Color,
     backgroundColor: Color,
     textColorSelected: Color,
     backgroundColorSelected: Color,
@@ -25,10 +24,9 @@ private fun Pill(
 ) {
     Text(
         text = text,
-        color = if (isSelected) textColorSelected else textColor,
+        color = if (isSelected) textColorSelected else backgroundColorSelected,
         modifier = getModifier(
             backgroundColor,
-            textColor,
             backgroundColorSelected,
             isSelected
         )
@@ -39,14 +37,13 @@ private fun Pill(
 
 private fun getModifier(
     backgroundColor: Color,
-    textColor: Color,
-    backgroundColorSelected: Color,
+    selectedColor: Color,
     isSelected: Boolean = false
 ): Modifier {
     return if (isSelected) {
         Modifier
             .background(
-                color = backgroundColorSelected,
+                color = selectedColor,
                 shape = RoundedCornerShape(KakeboTheme.cornerRadius.s)
             )
     } else {
@@ -56,8 +53,8 @@ private fun getModifier(
                 shape = RoundedCornerShape(KakeboTheme.cornerRadius.s)
             )
             .border(
-                width = KakeboTheme.borderSize.m,
-                color = textColor,
+                width = KakeboTheme.borderSize.s,
+                color = selectedColor,
                 shape = RoundedCornerShape(KakeboTheme.cornerRadius.s)
             )
     }
@@ -71,7 +68,6 @@ private fun CategoryOutcomePill(
 ) {
     Pill(
         text = text,
-        textColor = KakeboTheme.colorSchema.outcomeColor,
         backgroundColor = KakeboTheme.colorSchema.background,
         textColorSelected = KakeboTheme.colorSchema.onBackground,
         backgroundColorSelected = KakeboTheme.colorSchema.outcomeColor,
@@ -88,7 +84,6 @@ private fun CategoryIncomePill(
 ) {
     Pill(
         text = text,
-        textColor = KakeboTheme.colorSchema.incomeColor,
         backgroundColor = KakeboTheme.colorSchema.background,
         textColorSelected = KakeboTheme.colorSchema.onBackground,
         backgroundColorSelected = KakeboTheme.colorSchema.incomeColor,
@@ -115,17 +110,28 @@ fun CategoryPill(
 fun Pill(
     text: String,
     isSelected: Boolean,
+    isIncome: Boolean,
     onClick: () -> Unit
 ) {
-    Pill(
-        text = text,
-        textColor = KakeboTheme.materialColorScheme.onSurface,
-        backgroundColor = KakeboTheme.materialColorScheme.surface,
-        textColorSelected = KakeboTheme.materialColorScheme.surface,
-        backgroundColorSelected = KakeboTheme.materialColorScheme.primary,
-        isSelected = isSelected,
-        onClick = onClick
-    )
+    if (isIncome) {
+        Pill(
+            text = text,
+            backgroundColor = KakeboTheme.materialColorScheme.surface,
+            textColorSelected = KakeboTheme.materialColorScheme.surface,
+            backgroundColorSelected = KakeboTheme.colorSchema.incomeColor,
+            isSelected = isSelected,
+            onClick = onClick
+        )
+    } else {
+        Pill(
+            text = text,
+            backgroundColor = KakeboTheme.materialColorScheme.surface,
+            textColorSelected = KakeboTheme.materialColorScheme.surface,
+            backgroundColorSelected = KakeboTheme.colorSchema.outcomeColor,
+            isSelected = isSelected,
+            onClick = onClick
+        )
+    }
 }
 
 @MultiPreview
@@ -148,8 +154,9 @@ private fun IncomePillSelectedPreview() {
             )
             VerticalSpacer(KakeboTheme.space.l)
             Pill(
-                "Hola Mundi",
+                text = "Hola Mundi",
                 isSelected = true,
+                isIncome = true,
                 {}
             )
         }
@@ -176,8 +183,9 @@ private fun OutcomePillSelectedPreview() {
             )
             VerticalSpacer(KakeboTheme.space.l)
             Pill(
-                "Hola Mundi",
+                text = "Hola Mundi",
                 isSelected = false,
+                isIncome = false,
                 {}
             )
         }

@@ -31,6 +31,7 @@ import com.alavpa.kakebo.presentation.models.LineUI
 import com.alavpa.kakebo.presentation.theme.KakeboTheme
 import com.alavpa.kakebo.presentation.ui.statistics.StatisticsState
 import com.alavpa.kakebo.presentation.ui.statistics.StatisticsUserInteractions
+import java.text.DecimalFormat
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -74,7 +75,6 @@ fun StatisticsScreen(
             }
         }
     }
-
     LazyColumn(
         Modifier
             .fillMaxSize()
@@ -116,6 +116,7 @@ private fun Header(state: StatisticsState, onSavingsChanged: (String) -> Unit) {
                 value = state.savings,
                 onValueChange = onSavingsChanged,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                label = { Text(DecimalFormat.getInstance().currency?.symbol ?: "") },
                 textStyle = KakeboTheme.typography.titleLarge
             )
         }

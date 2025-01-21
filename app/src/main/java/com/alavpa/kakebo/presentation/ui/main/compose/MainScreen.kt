@@ -23,8 +23,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.alavpa.kakebo.presentation.components.BottomNavItem
-import com.alavpa.kakebo.presentation.ui.lines.AddLinesViewModel
-import com.alavpa.kakebo.presentation.ui.lines.compose.AddLinesScreen
+import com.alavpa.kakebo.presentation.ui.lines.LinesViewModel
+import com.alavpa.kakebo.presentation.ui.lines.compose.LinesScreen
 import com.alavpa.kakebo.presentation.ui.statistics.StatisticsViewModel
 import com.alavpa.kakebo.presentation.ui.statistics.compose.StatisticsScreen
 
@@ -90,11 +90,11 @@ private fun BottomBar(navController: NavController) {
 
 @Composable
 private fun OutcomeScreenContainer(
-    viewModel: AddLinesViewModel = hiltViewModel(),
+    viewModel: LinesViewModel = hiltViewModel(),
     snackbarHostState: SnackbarHostState
 ) {
     val state by viewModel.state.collectAsState()
-    AddLinesScreen(
+    LinesScreen(
         state = state,
         event = viewModel.eventsFlow,
         isIncome = false,
@@ -106,11 +106,11 @@ private fun OutcomeScreenContainer(
 
 @Composable
 private fun IncomeScreenContainer(
-    viewModel: AddLinesViewModel = hiltViewModel(),
+    viewModel: LinesViewModel = hiltViewModel(),
     snackbarHostState: SnackbarHostState
 ) {
     val state by viewModel.state.collectAsState()
-    AddLinesScreen(
+    LinesScreen(
         state = state,
         event = viewModel.eventsFlow,
         isIncome = true,
