@@ -20,7 +20,7 @@ fun KTextField(
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     isIncome: Boolean,
     value: String,
-    onValueChange: (String) -> Unit,
+    onValueChange: (String) -> Unit
 ) {
     val color = if (isIncome) {
         KakeboTheme.colorSchema.incomeColor
@@ -61,6 +61,5 @@ private fun KTextFieldPreview() {
                 value = "Hola Mundo!"
             ) { }
         }
-
     }
 }
