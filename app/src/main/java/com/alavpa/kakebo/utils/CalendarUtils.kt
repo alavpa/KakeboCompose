@@ -1,45 +1,35 @@
 package com.alavpa.kakebo.utils
 
 import android.icu.text.DateFormat
-import androidx.annotation.VisibleForTesting
 import java.util.Calendar
-import java.util.Date
 import javax.inject.Inject
 
-class CalendarUtils @Inject constructor() {
+class CalendarUtils @Inject constructor(
+    private val calendar: Calendar,
+    private val dateFormat: DateFormat
+) {
     fun getCurrentTimestamp(): Long {
-        return getCalendarInstance().timeInMillis
+        return calendar.timeInMillis
     }
 
     fun getDateFormat(timestamp: Long): String {
-        val date =
-            getCalendarInstance()
-                .apply {
-                    timeInMillis = timestamp
-                }.time
-        return format(date)
+        val date = calendar.apply {
+            timeInMillis = timestamp
+        }.time
+        return dateFormat.format(date)
     }
 
     fun getMonth(timestamp: Long): Int {
-        return getCalendarInstance().apply {
+        return calendar.apply {
             timeInMillis = timestamp
         }.get(Calendar.MONTH)
     }
 
     fun getYear(timestamp: Long): Int {
-        return getCalendarInstance().apply {
-            timeInMillis = timestamp
-        }.get(Calendar.YEAR)
+        return calendar.apply { timeInMillis = timestamp }.get(Calendar.YEAR)
     }
 
-    fun getCurrentMonth(): Int = getCalendarInstance().get(Calendar.MONTH)
+    fun getCurrentMonth(): Int = calendar.get(Calendar.MONTH)
 
-    fun getCurrentYear(): Int = getCalendarInstance().get(Calendar.YEAR)
-
-    @VisibleForTesting
-    fun getCalendarInstance(): Calendar = Calendar.getInstance()
-
-    @VisibleForTesting
-    fun format(date: Date): String =
-        DateFormat.getPatternInstance(DateFormat.YEAR_ABBR_MONTH).format(date)
+    fun getCurrentYear(): Int = calendar.get(Calendar.YEAR)
 }
