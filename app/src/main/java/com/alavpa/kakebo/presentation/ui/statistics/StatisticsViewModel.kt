@@ -60,6 +60,7 @@ class StatisticsViewModel @Inject constructor(
                             budget = budget,
                             budgetText = budget.toString(),
                             savings = savings,
+                            savingsText = (savings.toIntOrNull() ?: 0).toString(),
                             budgetWithSavings = budgetWithSavings.toString(),
                             lines = lines.map { linesUIMapper.from(it) }
                         )
@@ -111,6 +112,7 @@ data class StatisticsState(
     val budget: Int,
     val budgetText: String,
     val savings: String,
+    val savingsText: String,
     val budgetWithSavings: String,
     val lines: List<LineUI>,
     val showDialogParams: ShowDialogParams?
@@ -123,6 +125,7 @@ data class StatisticsState(
                 budget = 0,
                 budgetText = "",
                 savings = "",
+                savingsText = "",
                 budgetWithSavings = "",
                 lines = emptyList(),
                 showDialogParams = null

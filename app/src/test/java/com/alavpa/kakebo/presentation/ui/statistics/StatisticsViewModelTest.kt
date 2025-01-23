@@ -47,16 +47,16 @@ class StatisticsViewModelTest {
         every { getAllLines() } returns flowOf(Result.success(getLines()))
         every { getSavings() } returns flowOf(Result.success("12"))
         every { linesUIMapper.from(any()) } returns lineMock
-        val expectedState =
-            StatisticsState.INITIAL.copy(
-                income = "500",
-                outcome = "40",
-                budgetText = "460",
-                budget = 460,
-                savings = "12",
-                budgetWithSavings = "448",
-                lines = listOf(lineMock, lineMock)
-            )
+        val expectedState = StatisticsState.INITIAL.copy(
+            income = "500",
+            outcome = "40",
+            budgetText = "460",
+            budget = 460,
+            savings = "12",
+            savingsText = "12",
+            budgetWithSavings = "448",
+            lines = listOf(lineMock, lineMock)
+        )
 
         viewmodel.onInitializeOnce()
 
