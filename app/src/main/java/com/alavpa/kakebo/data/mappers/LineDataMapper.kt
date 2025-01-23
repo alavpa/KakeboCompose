@@ -19,7 +19,7 @@ class LineDataMapper @Inject constructor(
         calendarUtils.getYear(line.timestamp),
         typeDataMapper.from(line.type),
         categoryDataMapper.from(line.category),
-        line.isFixed
+        line.repeat
     )
 
     fun to(lineData: LineData): Line =
@@ -30,6 +30,6 @@ class LineDataMapper @Inject constructor(
             lineData.timestamp,
             typeDataMapper.to(lineData.type),
             categoryDataMapper.to(lineData.category),
-            lineData.isFixed
+            lineData.repeat
         )
 }

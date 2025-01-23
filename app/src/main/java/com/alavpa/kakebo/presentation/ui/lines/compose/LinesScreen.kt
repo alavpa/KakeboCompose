@@ -22,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -35,6 +36,9 @@ import com.alavpa.kakebo.presentation.theme.KakeboTheme
 import com.alavpa.kakebo.presentation.ui.lines.LinesEvent
 import com.alavpa.kakebo.presentation.ui.lines.LinesState
 import com.alavpa.kakebo.presentation.ui.lines.LinesUserInteractions
+import com.alavpa.kakebo.presentation.ui.lines.compose.LinesObject.AMOUNT_TEST_TAG
+import com.alavpa.kakebo.presentation.ui.lines.compose.LinesObject.DESCRIPTION_TEST_TAG
+import com.alavpa.kakebo.presentation.ui.lines.compose.LinesObject.SEND_TEST_TAG
 import java.text.DecimalFormat
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
@@ -76,8 +80,8 @@ fun LinesScreen(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(stringResource(R.string.repeat_per_month), Modifier.weight(1f))
                 Switch(
-                    checked = state.isFixed,
-                    onCheckedChange = { userInteractions.onIsFixedOutcomeChanged(it) },
+                    checked = state.repeat,
+                    onCheckedChange = { userInteractions.onRepeatChanged(it) },
                     colors = SwitchDefaults.colors(checkedTrackColor = color)
                 )
             }
@@ -98,7 +102,9 @@ fun LinesScreen(
             }
             VerticalSpacer(KakeboTheme.space.m)
             KTextField(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag(AMOUNT_TEST_TAG),
                 isIncome = isIncome,
                 value = state.amountText,
                 label = DecimalFormat.getCurrencyInstance().currency?.symbol ?: "",
@@ -110,7 +116,9 @@ fun LinesScreen(
             )
             VerticalSpacer(KakeboTheme.space.m)
             KTextField(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag(DESCRIPTION_TEST_TAG),
                 value = state.description,
                 label = stringResource(R.string.concept),
                 isIncome = isIncome,
@@ -127,7 +135,9 @@ fun LinesScreen(
             )
         }
         DynamicButton(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag(SEND_TEST_TAG),
             text = stringResource(R.string.send),
             isIncome = isIncome,
             onClick = { userInteractions.onClickSend(isIncome) }

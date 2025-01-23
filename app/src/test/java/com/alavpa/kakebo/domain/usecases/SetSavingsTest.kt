@@ -15,7 +15,7 @@ class SetSavingsTest {
     @Test
     fun `when call use case should call repository`() =
         runTest {
-            val savings = "12"
+            val savings = 12
             coEvery { repository.setSavings(savings) } returns flowOf(Result.success(Unit))
 
             useCase(savings)
@@ -26,7 +26,7 @@ class SetSavingsTest {
     @Test(expected = IllegalStateException::class)
     fun `when repository throws exception should emit exception`() =
         runTest {
-            val savings = "12"
+            val savings = 12
             coEvery { repository.setSavings(savings) } throws IllegalStateException()
 
             useCase(savings)

@@ -1,5 +1,6 @@
 package com.alavpa.kakebo.presentation.ui.lines
 
+import android.util.Log
 import androidx.compose.runtime.Immutable
 import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.ViewModel
@@ -58,12 +59,12 @@ class LinesViewModel @Inject constructor(
     override fun onClickSend(isIncome: Boolean) {
         with(_state.value) {
             val line = Line(
-                amount = (amountText + "00").toLongOrNull() ?: 0,
+                amount = (amountText).toIntOrNull() ?: 0,
                 description = description,
                 timestamp = calendarUtils.getCurrentTimestamp(),
                 type = if (isIncome) Type.Income else Type.Outcome,
                 category = categoryUIMapper.to(selectedCategory ?: CategoryUI.Extras),
-                isFixed = isFixed
+                repeat = repeat
             )
 
             insertNewLine(line).onEach { result ->
@@ -72,6 +73,9 @@ class LinesViewModel @Inject constructor(
                         currentState.copy(amountText = "", description = "")
                     }
                     events.send(LinesEvent.ShowSuccessMessage)
+                }
+                result.onFailure {
+                    Log.e(null, null, it)
                 }
             }.launchIn(viewModelScope)
         }
@@ -98,9 +102,9 @@ class LinesViewModel @Inject constructor(
         }
     }
 
-    override fun onIsFixedOutcomeChanged(value: Boolean) {
+    override fun onRepeatChanged(value: Boolean) {
         _state.update { currentState ->
-            currentState.copy(isFixed = value)
+            currentState.copy(repeat = value)
         }
     }
 }
@@ -111,7 +115,7 @@ data class LinesState @Inject constructor(
     val description: String,
     val categories: List<CategoryUI>,
     val selectedCategory: CategoryUI?,
-    val isFixed: Boolean
+    val repeat: Boolean
 ) {
     companion object {
         val INITIAL = LinesState(
@@ -119,7 +123,7 @@ data class LinesState @Inject constructor(
             description = "",
             categories = emptyList(),
             selectedCategory = null,
-            isFixed = false
+            repeat = false
         )
     }
 }
@@ -131,7 +135,7 @@ sealed class LinesEvent {
 interface LinesUserInteractions {
     fun onClickCategory(category: CategoryUI)
     fun onDescriptionChanged(description: String)
-    fun onIsFixedOutcomeChanged(value: Boolean)
+    fun onRepeatChanged(value: Boolean)
     fun onInitializeOnce(isIncome: Boolean)
     fun onClickSend(isIncome: Boolean)
     fun onAmountChanged(newAmount: String)
@@ -139,7 +143,7 @@ interface LinesUserInteractions {
     class Stub : LinesUserInteractions {
         override fun onClickCategory(category: CategoryUI) = Unit
         override fun onDescriptionChanged(description: String) = Unit
-        override fun onIsFixedOutcomeChanged(value: Boolean) = Unit
+        override fun onRepeatChanged(value: Boolean) = Unit
         override fun onInitializeOnce(isIncome: Boolean) = Unit
         override fun onClickSend(isIncome: Boolean) = Unit
         override fun onAmountChanged(newAmount: String) = Unit

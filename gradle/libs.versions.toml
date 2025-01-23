@@ -6,20 +6,21 @@ junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.8.7"
-activityCompose = "1.9.3"
-composeBom = "2024.12.01"
+activityCompose = "1.10.0"
+composeBom = "2025.01.00"
 uiTestManifest = "1.7.6"
 hilt = "2.53"
 navigationCompose = "2.8.5"
 hiltNavigationCompose = "1.2.0"
 room = "2.6.1"
 ksp = "2.1.0-1.0.29"
-datastorePreferences = "1.1.1"
+datastorePreferences = "1.1.2"
 mockk = "1.13.13"
 kotlinCoroutinesTest = "1.9.0"
 turbine = "1.2.0"
 ktlint = "12.1.2"
 detekt = "1.23.7"
+roboelectric = "4.14"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -48,6 +49,7 @@ androidx-datastore-preferences = { group = "androidx.datastore", name = "datasto
 mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinCoroutinesTest" }
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
+roboelectric = { group = "org.robolectric", name = "robolectric", version.ref = "roboelectric"}
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

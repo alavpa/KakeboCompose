@@ -4,17 +4,17 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 
 interface PreferencesDatasource {
-    suspend fun setSavings(savings: String)
+    suspend fun setSavings(savings: Int)
 
-    fun getSavings(): Flow<String>
+    fun getSavings(): Flow<Int>
 }
 
 class PreferencesDatasourceImpl @Inject constructor(
     private val dataStore: KakeboDataStore
 ) : PreferencesDatasource {
-    override suspend fun setSavings(savings: String) {
+    override suspend fun setSavings(savings: Int) {
         dataStore.save(savings)
     }
 
-    override fun getSavings(): Flow<String> = dataStore.savingsFlow()
+    override fun getSavings(): Flow<Int> = dataStore.savingsFlow()
 }

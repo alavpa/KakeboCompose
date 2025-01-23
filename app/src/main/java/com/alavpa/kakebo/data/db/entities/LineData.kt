@@ -8,12 +8,12 @@ import com.alavpa.kakebo.data.model.TypeData
 @Entity
 data class LineData(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
-    val amount: Long,
+    val amount: Int,
     val description: String,
     val timestamp: Long,
     val month: Int,
     val year: Int,
     val type: TypeData,
     val category: CategoryData,
-    val isFixed: Boolean
+    val repeat: Boolean
 )

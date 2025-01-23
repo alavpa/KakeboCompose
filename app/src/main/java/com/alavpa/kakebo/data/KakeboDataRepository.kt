@@ -36,14 +36,14 @@ class KakeboDataRepository @Inject constructor(
         }.catch { emit(Result.failure(it)) }
     }
 
-    override fun setSavings(savings: String): Flow<Result<Unit>> = flow {
+    override fun setSavings(savings: Int): Flow<Result<Unit>> = flow {
         preferencesDatasource.setSavings(savings)
         emit(Result.success(Unit))
     }.catch {
         emit(Result.failure(it))
     }
 
-    override fun getSavings(): Flow<Result<String>> = preferencesDatasource.getSavings()
+    override fun getSavings(): Flow<Result<Int>> = preferencesDatasource.getSavings()
         .map { Result.success(it) }
         .catch { emit(Result.failure(it)) }
 }

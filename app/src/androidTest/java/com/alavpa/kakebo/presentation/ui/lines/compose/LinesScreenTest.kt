@@ -9,9 +9,8 @@ import com.alavpa.kakebo.domain.usecases.GetCategories
 import com.alavpa.kakebo.domain.usecases.InsertNewLine
 import com.alavpa.kakebo.presentation.mappers.CategoryUIMapper
 import com.alavpa.kakebo.presentation.theme.KakeboTheme
-import com.alavpa.kakebo.presentation.ui.lines.AddLinesState
-import com.alavpa.kakebo.presentation.ui.lines.AddLinesViewModel
-import com.alavpa.kakebo.utils.AmountUtils
+import com.alavpa.kakebo.presentation.ui.lines.LinesState
+import com.alavpa.kakebo.presentation.ui.lines.LinesViewModel
 import com.alavpa.kakebo.utils.CalendarUtils
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -22,11 +21,10 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import javax.inject.Inject
-import kotlinx.coroutines.flow.flow
 
 @HiltAndroidTest
 @RunWith(AndroidJUnit4::class)
-class AddLinesScreenTest {
+class LinesScreenTest {
     @get:Rule(order = 0)
     val hiltRule = HiltAndroidRule(this)
 
@@ -45,32 +43,38 @@ class AddLinesScreenTest {
     @Inject
     lateinit var categoryUIMapper: CategoryUIMapper
 
-    @Inject
-    lateinit var amountUtils: AmountUtils
-
-    private lateinit var viewModel: AddLinesViewModel
+    private lateinit var viewModel: LinesViewModel
 
     @Before
     fun setUp() {
         hiltRule.inject()
-        viewModel = AddLinesViewModel(
+        viewModel = LinesViewModel(
             insertNewLine,
             getCategories,
             calendarUtils,
             categoryUIMapper,
-            amountUtils,
-            AddLinesState.INITIAL
+            LinesState.INITIAL
         )
     }
 
     @Test
-    fun whenClickNumbersShouldShowAmountCurrency() {
+    fun whenClickNumbersShouldShowAmount() {
         initializeTest(true) { }
 
-        AddLinesScreenTestObject.onClick1(composeRule)
-        AddLinesScreenTestObject.onClick2(composeRule)
+        LinesScreenTestObject.onWriteAmount(composeRule, "12")
+        LinesScreenTestObject.onWriteAmount(composeRule, "24")
 
-        AddLinesScreenTestObject.assertExistsText(composeRule, "$0.12")
+        LinesScreenTestObject.assertAmount(composeRule, "1224")
+    }
+
+    @Test
+    fun whenClickNotNumbersShouldNotShowAmount() {
+        initializeTest(true) { }
+
+        LinesScreenTestObject.onWriteAmount(composeRule, "12")
+        LinesScreenTestObject.onWriteAmount(composeRule, ",12")
+
+        LinesScreenTestObject.assertAmount(composeRule, "12")
     }
 
     @Test
@@ -82,11 +86,12 @@ class AddLinesScreenTest {
             assertEquals(expectedMessage, text)
         }
 
-        AddLinesScreenTestObject.onClick1(composeRule)
-        AddLinesScreenTestObject.onClick2(composeRule)
-        AddLinesScreenTestObject.onClickSend(composeRule)
+        LinesScreenTestObject.onWriteAmount(composeRule, "1234")
+        LinesScreenTestObject.onWriteDescription(composeRule, "description")
+        LinesScreenTestObject.onClickSend(composeRule)
 
-        AddLinesScreenTestObject.assertExistsText(composeRule, "$0.00")
+        LinesScreenTestObject.assertAmount(composeRule, "")
+        LinesScreenTestObject.assertDescription(composeRule, "")
         assertTrue(showSnackBarMessage)
     }
 
@@ -99,31 +104,21 @@ class AddLinesScreenTest {
             assertEquals(expectedMessage, text)
         }
 
-        AddLinesScreenTestObject.onClick1(composeRule)
-        AddLinesScreenTestObject.onClick2(composeRule)
-        AddLinesScreenTestObject.onClickSend(composeRule)
+        LinesScreenTestObject.onWriteAmount(composeRule, "1234")
+        LinesScreenTestObject.onWriteDescription(composeRule, "description")
+        LinesScreenTestObject.onClickSend(composeRule)
 
-        AddLinesScreenTestObject.assertExistsText(composeRule, "$0.00")
+        LinesScreenTestObject.assertAmount(composeRule, "")
+        LinesScreenTestObject.assertDescription(composeRule, "")
         assertTrue(showSnackBarMessage)
-    }
-
-    @Test
-    fun whenDeleteIncomeShouldRemoveNumber() {
-        initializeTest(true) {}
-
-        AddLinesScreenTestObject.onClick1(composeRule)
-        AddLinesScreenTestObject.onClick2(composeRule)
-        AddLinesScreenTestObject.onClickDelete(composeRule)
-
-        AddLinesScreenTestObject.assertExistsText(composeRule, "$0.01")
     }
 
     private fun initializeTest(isIncome: Boolean, showSnackBarMessage: (String) -> Unit) {
         composeRule.setContent {
             KakeboTheme {
-                AddLinesScreen(
+                LinesScreen(
                     viewModel.state.collectAsState().value,
-                    flow { },
+                    viewModel.eventsFlow,
                     isIncome,
                     viewModel,
                     showSnackBarMessage

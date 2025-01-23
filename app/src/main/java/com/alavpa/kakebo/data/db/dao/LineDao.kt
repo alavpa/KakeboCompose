@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface LineDao {
     @Query(
-        "SELECT * FROM LineData WHERE (month = :month AND year = :year) OR isFixed = 1 " +
+        "SELECT * FROM LineData WHERE (month = :month AND year = :year) OR repeat = 1 " +
             "ORDER BY timestamp DESC"
     )
     fun getAllFromCurrentMonthYear(

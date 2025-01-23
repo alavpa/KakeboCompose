@@ -54,7 +54,7 @@ class LineDataMapperTest {
 
     private fun provideLine(
         id: Long = 0,
-        amount: Long = 0,
+        amount: Int = 0,
         description: String = "",
         timestamp: Long = 0,
         type: Type = Type.Income,
@@ -64,7 +64,7 @@ class LineDataMapperTest {
 
     private fun provideLineData(
         id: Long = 0,
-        amount: Long = 0,
+        amount: Int = 0,
         description: String = "",
         timestamp: Long = 0,
         month: Int = 0,

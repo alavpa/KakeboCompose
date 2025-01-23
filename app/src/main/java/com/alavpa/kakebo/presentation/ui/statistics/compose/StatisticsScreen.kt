@@ -123,7 +123,7 @@ private fun Header(state: StatisticsState, onSavingsChanged: (String) -> Unit) {
         VerticalSpacer(KakeboTheme.space.l)
         BudgetBox(
             title = stringResource(R.string.budget_with_savings),
-            subtitle = stringResource(R.string.operation, state.budgetText, state.savingsText),
+            subtitle = stringResource(R.string.operation, state.budgetText, state.savings),
             result = state.budgetWithSavings,
             color = KakeboTheme.colorSchema.incomeColor,
             modifier = Modifier.align(Alignment.End)

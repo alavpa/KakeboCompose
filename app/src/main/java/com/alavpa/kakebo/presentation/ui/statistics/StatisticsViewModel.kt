@@ -1,6 +1,7 @@
 package com.alavpa.kakebo.presentation.ui.statistics
 
 import androidx.compose.runtime.Immutable
+import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alavpa.kakebo.domain.models.Type
@@ -10,7 +11,6 @@ import com.alavpa.kakebo.domain.usecases.RemoveLine
 import com.alavpa.kakebo.domain.usecases.SetSavings
 import com.alavpa.kakebo.presentation.mappers.LineUIMapper
 import com.alavpa.kakebo.presentation.models.LineUI
-import com.alavpa.kakebo.utils.AmountUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.FlowPreview
@@ -29,7 +29,6 @@ private const val DEBOUNCE_TIMEOUT = 500L
 @HiltViewModel
 class StatisticsViewModel @Inject constructor(
     private val getLines: GetAllLines,
-    private val amountUtils: AmountUtils,
     private val setSavings: SetSavings,
     private val getSavings: GetSavings,
     private val removeLine: RemoveLine,
@@ -53,17 +52,15 @@ class StatisticsViewModel @Inject constructor(
                     val income = lines.filter { it.type == Type.Income }.sumOf { it.amount }
                     val outcome = lines.filter { it.type == Type.Outcome }.sumOf { it.amount }
                     val budget = income - outcome
-                    val longSavings = amountUtils.parseAmountToLong(savings)
-                    val budgetWithSavings = budget - longSavings
+                    val budgetWithSavings = budget - savings
                     _state.update { currentState ->
                         currentState.copy(
-                            income = amountUtils.fromLongToCurrency(income),
-                            outcome = amountUtils.fromLongToCurrency(outcome),
+                            income = income.toString(),
+                            outcome = outcome.toString(),
                             budget = budget,
-                            budgetText = amountUtils.fromLongToCurrency(budget),
-                            savings = savings,
-                            savingsText = amountUtils.fromLongToCurrency(longSavings),
-                            budgetWithSavings = amountUtils.fromLongToCurrency(budgetWithSavings),
+                            budgetText = budget.toString(),
+                            savings = savings.toString(),
+                            budgetWithSavings = budgetWithSavings.toString(),
                             lines = lines.map { linesUIMapper.from(it) }
                         )
                     }
@@ -74,10 +71,13 @@ class StatisticsViewModel @Inject constructor(
 
     @OptIn(FlowPreview::class)
     override fun onSavingsChanged(value: String) {
-        _state.update { currentState ->
-            currentState.copy(savings = value)
+        if (value.isDigitsOnly()) {
+            _state.update { currentState ->
+                currentState.copy(savings = value)
+            }
+            val savings = value.toIntOrNull() ?: 0
+            setSavings(savings).debounce(DEBOUNCE_TIMEOUT).launchIn(viewModelScope)
         }
-        setSavings(value).debounce(DEBOUNCE_TIMEOUT).launchIn(viewModelScope)
     }
 
     override fun onClickDeleteLine(id: Long, isIncome: Boolean) {
@@ -87,8 +87,8 @@ class StatisticsViewModel @Inject constructor(
     }
 
     override fun onConfirmDelete() {
-        _state.value.showDialogParams?.let {
-            removeLine(it.lineToDelete)
+        _state.value.showDialogParams?.let { params ->
+            removeLine(params.lineToDelete)
                 .onEach {
                     _state.update {
                         it.copy(showDialogParams = null)
@@ -109,10 +109,9 @@ class StatisticsViewModel @Inject constructor(
 data class StatisticsState(
     val income: String,
     val outcome: String,
-    val budget: Long,
+    val budget: Int,
     val budgetText: String,
     val savings: String,
-    val savingsText: String,
     val budgetWithSavings: String,
     val lines: List<LineUI>,
     val showDialogParams: ShowDialogParams?
@@ -125,7 +124,6 @@ data class StatisticsState(
                 budget = 0,
                 budgetText = "",
                 savings = "",
-                savingsText = "",
                 budgetWithSavings = "",
                 lines = emptyList(),
                 showDialogParams = null

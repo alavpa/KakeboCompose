@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -20,14 +20,13 @@ class KakeboDataStore @Inject constructor(
     @ApplicationContext val context: Context
 ) {
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = PREFERENCES_FILENAME)
-    private val savingsKey = stringPreferencesKey(SAVINGS_KEY)
+    private val savingsKey = intPreferencesKey(SAVINGS_KEY)
 
-    fun savingsFlow(): Flow<String> =
-        context.dataStore.data.map { preferences ->
-            preferences[savingsKey] ?: "0.00"
-        }
+    fun savingsFlow(): Flow<Int> = context.dataStore.data.map { preferences ->
+        preferences[savingsKey] ?: 0
+    }
 
-    suspend fun save(savings: String) {
+    suspend fun save(savings: Int) {
         context.dataStore.edit { settings ->
             settings[savingsKey] = savings
         }

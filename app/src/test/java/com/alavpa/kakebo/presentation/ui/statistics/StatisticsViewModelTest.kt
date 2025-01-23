@@ -10,21 +10,24 @@ import com.alavpa.kakebo.domain.usecases.SetSavings
 import com.alavpa.kakebo.presentation.mappers.LineUIMapper
 import com.alavpa.kakebo.presentation.models.LineUI
 import com.alavpa.kakebo.testutils.MainCoroutinesRule
-import com.alavpa.kakebo.utils.AmountUtils
+import io.mockk.called
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 import kotlinx.coroutines.flow.flowOf
 
+@RunWith(RobolectricTestRunner::class)
 class StatisticsViewModelTest {
     private lateinit var viewmodel: StatisticsViewModel
 
     private val getAllLines: GetAllLines = mockk()
-    private val amountUtils: AmountUtils = mockk()
     private val setSavings: SetSavings = mockk()
     private val getSavings: GetSavings = mockk()
     private val removeLine: RemoveLine = mockk()
@@ -42,23 +45,16 @@ class StatisticsViewModelTest {
     fun `when initialize should set proper values`() {
         val lineMock: LineUI = mockk()
         every { getAllLines() } returns flowOf(Result.success(getLines()))
-        every { getSavings() } returns flowOf(Result.success("12.00"))
-        every { amountUtils.fromLongToCurrency(50000) } returns "$500.00"
-        every { amountUtils.fromLongToCurrency(4000) } returns "$40.00"
-        every { amountUtils.fromLongToCurrency(46000) } returns "$460.00"
-        every { amountUtils.fromLongToCurrency(1200) } returns "$12.00"
-        every { amountUtils.parseAmountToLong("12.00") } returns 1200
-        every { amountUtils.fromLongToCurrency(44800) } returns "$448.00"
+        every { getSavings() } returns flowOf(Result.success(12))
         every { linesUIMapper.from(any()) } returns lineMock
         val expectedState =
             StatisticsState.INITIAL.copy(
-                income = "$500.00",
-                outcome = "$40.00",
-                budgetText = "$460.00",
-                budget = 46000,
-                savingsText = "$12.00",
-                savings = "12.00",
-                budgetWithSavings = "$448.00",
+                income = "500",
+                outcome = "40",
+                budgetText = "460",
+                budget = 460,
+                savings = "12",
+                budgetWithSavings = "448",
                 lines = listOf(lineMock, lineMock)
             )
 
@@ -69,19 +65,30 @@ class StatisticsViewModelTest {
 
     @Test
     fun `when savings change should update value`() {
-        coEvery { setSavings("56") } returns flowOf(Result.success(Unit))
+        coEvery { setSavings(56) } returns flowOf(Result.success(Unit))
         val viewmodel = provideViewModel(StatisticsState.INITIAL)
         val expectedState = StatisticsState.INITIAL.copy(savings = "56")
 
         viewmodel.onSavingsChanged("56")
 
         assertEquals(expectedState, viewmodel.state.value)
+        verify { setSavings(56) }
+    }
+
+    @Test
+    fun `when savings wrong value should not do anything`() {
+        val viewmodel = provideViewModel(StatisticsState.INITIAL.copy(savings = "45"))
+        val expectedState = StatisticsState.INITIAL.copy(savings = "45")
+
+        viewmodel.onSavingsChanged("text")
+
+        assertEquals(expectedState, viewmodel.state.value)
+        verify { setSavings wasNot called }
     }
 
     private fun provideViewModel(state: StatisticsState) =
         StatisticsViewModel(
             getAllLines,
-            amountUtils,
             setSavings,
             getSavings,
             removeLine,
@@ -91,13 +98,13 @@ class StatisticsViewModelTest {
 
     private fun getLines(): List<Line> {
         return listOf(
-            getLine(50000, Type.Income),
-            getLine(4000, Type.Outcome)
+            getLine(500, Type.Income),
+            getLine(40, Type.Outcome)
         )
     }
 
     private fun getLine(
-        amount: Long,
+        amount: Int,
         type: Type
     ): Line {
         return Line(
@@ -106,7 +113,7 @@ class StatisticsViewModelTest {
             timestamp = 1,
             type = type,
             category = Category.Extras,
-            isFixed = false
+            repeat = false
         )
     }
 }
