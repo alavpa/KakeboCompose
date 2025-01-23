@@ -18,7 +18,7 @@ class GetSavingsTest {
     @Test
     fun `when call use case should call repository`() =
         runTest {
-            val result = Result.success(12)
+            val result = Result.success("12")
             every { repository.getSavings() } returns flowOf(result)
 
             useCase().test {

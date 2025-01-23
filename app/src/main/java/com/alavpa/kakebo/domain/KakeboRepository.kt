@@ -10,7 +10,7 @@ interface KakeboRepository {
 
     fun getAllLines(): Flow<Result<List<Line>>>
 
-    fun setSavings(savings: Int): Flow<Result<Unit>>
+    fun setSavings(savings: String): Flow<Result<Unit>>
 
-    fun getSavings(): Flow<Result<Int>>
+    fun getSavings(): Flow<Result<String>>
 }

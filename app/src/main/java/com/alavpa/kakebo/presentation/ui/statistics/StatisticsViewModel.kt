@@ -52,14 +52,14 @@ class StatisticsViewModel @Inject constructor(
                     val income = lines.filter { it.type == Type.Income }.sumOf { it.amount }
                     val outcome = lines.filter { it.type == Type.Outcome }.sumOf { it.amount }
                     val budget = income - outcome
-                    val budgetWithSavings = budget - savings
+                    val budgetWithSavings = budget - (savings.toIntOrNull() ?: 0)
                     _state.update { currentState ->
                         currentState.copy(
                             income = income.toString(),
                             outcome = outcome.toString(),
                             budget = budget,
                             budgetText = budget.toString(),
-                            savings = savings.toString(),
+                            savings = savings,
                             budgetWithSavings = budgetWithSavings.toString(),
                             lines = lines.map { linesUIMapper.from(it) }
                         )
@@ -75,8 +75,7 @@ class StatisticsViewModel @Inject constructor(
             _state.update { currentState ->
                 currentState.copy(savings = value)
             }
-            val savings = value.toIntOrNull() ?: 0
-            setSavings(savings).debounce(DEBOUNCE_TIMEOUT).launchIn(viewModelScope)
+            setSavings(value).debounce(DEBOUNCE_TIMEOUT).launchIn(viewModelScope)
         }
     }
 
