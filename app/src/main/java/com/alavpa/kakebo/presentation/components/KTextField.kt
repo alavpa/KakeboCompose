@@ -15,7 +15,9 @@ import com.alavpa.kakebo.presentation.theme.KakeboTheme
 @Composable
 fun KTextField(
     modifier: Modifier = Modifier,
-    label: String = "",
+    label: String? = null,
+    suffix: String? = null,
+    prefix: String? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     isIncome: Boolean,
@@ -40,7 +42,9 @@ fun KTextField(
                 OutlinedTextFieldDefaults.colors().textSelectionColors.backgroundColor
             )
         ),
-        label = { Text(text = label) },
+        prefix = prefix?.let { { Text(text = it) } },
+        suffix = suffix?.let { { Text(text = it) } },
+        label = label?.let { { Text(text = it) } },
         keyboardActions = keyboardActions,
         keyboardOptions = keyboardOptions
     )
@@ -52,6 +56,7 @@ private fun KTextFieldPreview() {
     KakeboTheme {
         Column {
             KTextField(
+                suffix = "¢",
                 isIncome = true,
                 value = "Hola Mundo!"
             ) { }

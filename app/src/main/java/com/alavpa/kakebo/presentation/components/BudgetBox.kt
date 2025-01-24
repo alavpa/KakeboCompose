@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -36,8 +35,7 @@ fun BudgetBox(
         Text(
             title,
             style = KakeboTheme.typography.regularText,
-            color = color,
-            modifier = Modifier.align(Alignment.End)
+            color = color
         )
         Text(subtitle, style = KakeboTheme.typography.smallText, color = color)
         Text(result, style = KakeboTheme.typography.padText, color = color)

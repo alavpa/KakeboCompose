@@ -39,7 +39,6 @@ import com.alavpa.kakebo.presentation.ui.lines.LinesUserInteractions
 import com.alavpa.kakebo.presentation.ui.lines.compose.LinesObject.AMOUNT_TEST_TAG
 import com.alavpa.kakebo.presentation.ui.lines.compose.LinesObject.DESCRIPTION_TEST_TAG
 import com.alavpa.kakebo.presentation.ui.lines.compose.LinesObject.SEND_TEST_TAG
-import java.text.DecimalFormat
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flow
@@ -107,7 +106,8 @@ fun LinesScreen(
                     .testTag(AMOUNT_TEST_TAG),
                 isIncome = isIncome,
                 value = state.amountText,
-                label = DecimalFormat.getCurrencyInstance().currency?.symbol ?: "",
+                label = if (isIncome) stringResource(R.string.income) else stringResource(R.string.outcome),
+                suffix = state.currency,
                 onValueChange = { userInteractions.onAmountChanged(it) },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number,

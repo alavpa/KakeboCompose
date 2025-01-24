@@ -13,6 +13,7 @@ import com.alavpa.kakebo.presentation.mappers.CategoryUIMapper
 import com.alavpa.kakebo.presentation.models.CategoryUI
 import com.alavpa.kakebo.utils.CalendarUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.text.NumberFormat
 import javax.inject.Inject
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -48,7 +49,8 @@ class LinesViewModel @Inject constructor(
                         currentState.copy(
                             categories = categories.map { category ->
                                 categoryUIMapper.from(category)
-                            }
+                            },
+                            currency = NumberFormat.getCurrencyInstance().currency?.symbol ?: ""
                         )
                     }
                 }
@@ -115,7 +117,8 @@ data class LinesState @Inject constructor(
     val description: String,
     val categories: List<CategoryUI>,
     val selectedCategory: CategoryUI?,
-    val repeat: Boolean
+    val repeat: Boolean,
+    val currency: String
 ) {
     companion object {
         val INITIAL = LinesState(
@@ -123,7 +126,8 @@ data class LinesState @Inject constructor(
             description = "",
             categories = emptyList(),
             selectedCategory = null,
-            repeat = false
+            repeat = false,
+            currency = ""
         )
     }
 }

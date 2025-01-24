@@ -70,7 +70,7 @@ class CalendarUtilsTest {
     fun `when ask for current date formatted by timestamp return proper date`() {
         calendar.timeInMillis = TIMESTAMP
         val expectedDate = calendar.time
-        every {dateFormat.format(expectedDate) } returns "Dec 2024"
+        every { dateFormat.format(expectedDate) } returns "Dec 2024"
 
         val date = calendarUtils.getDateFormat(TIMESTAMP)
 

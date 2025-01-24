@@ -4,24 +4,23 @@ import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.ComposeTestRule
-import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
-import com.alavpa.kakebo.R
-import com.alavpa.kakebo.TextUtils
+import com.alavpa.kakebo.presentation.components.BottomNavItem
 
 object MainActivityTestObject {
 
     private fun tabIncome(composeTestRule: ComposeTestRule): SemanticsNodeInteraction {
-        return composeTestRule.onNodeWithText(TextUtils.getText(R.string.income))
+        return composeTestRule.onNodeWithTag(BottomNavItem.Income.route)
     }
 
     private fun tabStatistics(composeTestRule: ComposeTestRule): SemanticsNodeInteraction {
-        return composeTestRule.onNodeWithText(TextUtils.getText(R.string.statistics))
+        return composeTestRule.onNodeWithTag(BottomNavItem.Statistics.route)
     }
 
     private fun tabOutcome(composeTestRule: ComposeTestRule): SemanticsNodeInteraction {
-        return composeTestRule.onNodeWithText(TextUtils.getText(R.string.outcome))
+        return composeTestRule.onNodeWithTag(BottomNavItem.Outcome.route)
     }
 
     fun onTabIncomePerformClick(composeTestRule: ComposeTestRule): SemanticsNodeInteraction {

@@ -12,6 +12,7 @@ import com.alavpa.kakebo.domain.usecases.SetSavings
 import com.alavpa.kakebo.presentation.mappers.LineUIMapper
 import com.alavpa.kakebo.presentation.models.LineUI
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.text.NumberFormat
 import javax.inject.Inject
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -53,16 +54,18 @@ class StatisticsViewModel @Inject constructor(
                     val outcome = lines.filter { it.type == Type.Outcome }.sumOf { it.amount }
                     val budget = income - outcome
                     val budgetWithSavings = budget - (savings.toIntOrNull() ?: 0)
+                    val currency = NumberFormat.getCurrencyInstance().currency?.symbol ?: ""
                     _state.update { currentState ->
                         currentState.copy(
                             income = income.toString(),
                             outcome = outcome.toString(),
-                            budget = budget,
-                            budgetText = budget.toString(),
+                            budget = budget.toString(),
+                            budgetText = "$budget$currency",
                             savings = savings,
                             savingsText = (savings.toIntOrNull() ?: 0).toString(),
-                            budgetWithSavings = budgetWithSavings.toString(),
-                            lines = lines.map { linesUIMapper.from(it) }
+                            budgetWithSavings = "$budgetWithSavings$currency",
+                            lines = lines.map { linesUIMapper.from(it) },
+                            currency = currency
                         )
                     }
                 }
@@ -109,26 +112,28 @@ class StatisticsViewModel @Inject constructor(
 data class StatisticsState(
     val income: String,
     val outcome: String,
-    val budget: Int,
+    val budget: String,
     val budgetText: String,
     val savings: String,
     val savingsText: String,
     val budgetWithSavings: String,
     val lines: List<LineUI>,
-    val showDialogParams: ShowDialogParams?
+    val showDialogParams: ShowDialogParams?,
+    val currency: String
 ) {
     companion object {
         val INITIAL =
             StatisticsState(
                 income = "",
                 outcome = "",
-                budget = 0,
+                budget = "",
                 budgetText = "",
                 savings = "",
                 savingsText = "",
                 budgetWithSavings = "",
                 lines = emptyList(),
-                showDialogParams = null
+                showDialogParams = null,
+                currency = ""
             )
     }
 }

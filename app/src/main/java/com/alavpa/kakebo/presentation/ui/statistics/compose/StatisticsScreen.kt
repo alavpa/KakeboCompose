@@ -96,37 +96,38 @@ private fun Header(state: StatisticsState, onSavingsChanged: (String) -> Unit) {
     Column {
         BudgetBox(
             title = stringResource(R.string.budget),
-            subtitle = stringResource(R.string.operation, state.income, state.outcome),
+            subtitle = stringResource(
+                R.string.operation,
+                state.income,
+                state.outcome,
+                state.currency
+            ),
             result = state.budgetText,
-            color = KakeboTheme.colorSchema.incomeColor
+            color = KakeboTheme.colorSchema.incomeColor,
+            modifier = Modifier.fillMaxWidth()
         )
         VerticalSpacer(KakeboTheme.space.l)
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(
-                modifier = Modifier.weight(1.0f),
-                text = stringResource(R.string.savings),
-                style = KakeboTheme.typography.titleLarge
-            )
-            HorizontalSpacer(KakeboTheme.space.s)
-            OutlinedTextField(
-                modifier = Modifier.weight(0.5f),
-                value = state.savings,
-                onValueChange = onSavingsChanged,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                label = { Text(DecimalFormat.getInstance().currency?.symbol ?: "") },
-                textStyle = KakeboTheme.typography.titleLarge
-            )
-        }
+        OutlinedTextField(
+            modifier = Modifier.fillMaxWidth(),
+            value = state.savings,
+            onValueChange = onSavingsChanged,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            label = { Text(stringResource(R.string.savings)) },
+            textStyle = KakeboTheme.typography.titleLarge,
+            suffix = { Text(DecimalFormat.getInstance().currency?.symbol ?: "") }
+        )
         VerticalSpacer(KakeboTheme.space.l)
         BudgetBox(
             title = stringResource(R.string.budget_with_savings),
-            subtitle = stringResource(R.string.operation, state.budgetText, state.savingsText),
+            subtitle = stringResource(
+                R.string.operation,
+                state.budget,
+                state.savingsText,
+                state.currency
+            ),
             result = state.budgetWithSavings,
             color = KakeboTheme.colorSchema.incomeColor,
-            modifier = Modifier.align(Alignment.End)
+            modifier = Modifier.fillMaxWidth()
         )
     }
 }
@@ -142,7 +143,7 @@ fun StatisticsPreview() {
                     income = "$100.00",
                     outcome = "$50.00",
                     budgetText = "$50.00",
-                    budget = 0,
+                    budget = "",
                     savings = "30",
                     budgetWithSavings = "20",
                     lines = listOf(

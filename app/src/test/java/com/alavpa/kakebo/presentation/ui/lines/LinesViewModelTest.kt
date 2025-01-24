@@ -45,12 +45,15 @@ class LinesViewModelTest {
     fun `when viewmodel initialize as income should fill categories properly`() {
         val isIncome = true
         val categories = listOf(Category.Salary)
-        val expectedCategories = listOf(CategoryUI.Salary)
         every { getCategories(isIncome) } returns flowOf(Result.success(categories))
+        val expectedState = LinesState.INITIAL.copy(
+            categories = listOf(CategoryUI.Salary),
+            currency = "$"
+        )
 
         viewModel.onInitializeOnce(isIncome)
 
-        assertEquals(viewModel.state.value.categories, expectedCategories)
+        assertEquals(viewModel.state.value, expectedState)
     }
 
     @Test
